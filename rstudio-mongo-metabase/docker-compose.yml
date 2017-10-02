@@ -1,0 +1,15 @@
+version: "2"
+services:
+  rstudio:
+    image: rocker/rstudio
+    ports:
+      - "8787:8787"
+  metabase:
+    image: metabase/metabase
+    ports:
+      - "3015:3000"
+  mongodb:
+    image: mongo
+    ports:
+      - "27020:27017"
+
