@@ -1,0 +1,14 @@
+<html>
+  <head>
+    <title>rstudio news</title>
+  </head>
+  <body style="font-family: sans-serif;">
+    <h1>RStudio News</h1>
+    <div id="news">
+      {% for news_ in news %}
+        <p><a href="{{ news_.link }}" target='_blank'">{{ news_.header }}<a/></p>
+      {% endfor %}
+    </div>
+  </body>
+</html>
+
