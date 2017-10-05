@@ -1,0 +1,12 @@
+version: "2"
+services:
+  plumber:
+    image: crazycapivara/plumber:rstudio_news
+    ports:
+      - "8005:8000"
+  flask:
+    image: crazycapivara/flask
+    command: use_template.py
+    ports:
+      - "5005:5000"
+
