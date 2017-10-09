@@ -1,0 +1,16 @@
+version: "2"
+services:
+  express:
+    image: crazycapivara/express
+    volumes:
+      - ./scripts:/app
+    command: sh -c "npm install express passport passport-http && node werkstatt.js"
+    ports:
+      - "3020:3000"
+  #bender:
+  #  image: rocker/shiny
+  #  ports:
+  #    - "4848:3838"
+  #fry:
+  #  image: rocker/shiny
+
