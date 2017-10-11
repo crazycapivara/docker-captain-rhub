@@ -15,6 +15,8 @@ services:
       - "5005:5000"
   lb:
     image: dockercloud/haproxy
+    environment:
+      - HTTP_BASIC_AUTH=fry:fry
     ports:
       - "5080:80"
     links:
