@@ -1,0 +1,28 @@
+version: "2"
+services:
+  rstudio:
+    #image: rocker/rstudio
+    build: .
+    ports:
+      - "8787:8787"
+    volumes:
+      - ./html:/home/rstudio/public
+      #- data_science:/home/rstudio/dev
+    #environment:
+    #  - USERID=0
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8016:80"
+    volumes:
+      - ./html/develop:/usr/share/nginx/html:ro
+  nginx_master:
+    image: nginx:alpine
+    ports:
+      - "8017:80"
+    volumes:
+      - ./html/master:/usr/share/nginx/html:ro
+
+#volumes:
+#  data_science:
+
