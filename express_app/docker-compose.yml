@@ -1,16 +1,17 @@
 version: "2"
 services:
+  bender:
+    image: rocker/shiny
+    ports:
+      - "4848:3838"
   express:
     image: crazycapivara/express
     volumes:
       - ./scripts:/app
-    command: sh -c "npm install express passport passport-http && node werkstatt.js"
+    command: sh -c "ping -c 2 bender && npm install express passport passport-http && node werkstatt.js"
+    #command: ["npm install express passport passport-http",  "node werkstatt.js"]
     ports:
       - "3020:3000"
-  #bender:
-  #  image: rocker/shiny
-  #  ports:
-  #    - "4848:3838"
-  #fry:
+    #fry:
   #  image: rocker/shiny
 
