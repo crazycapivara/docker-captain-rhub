@@ -19,6 +19,7 @@ services:
       - HTTP_BASIC_AUTH=fry:fry
     ports:
       - "5080:80"
+      - "1936:1936"
     links:
       - flask
       - flask_rapi
