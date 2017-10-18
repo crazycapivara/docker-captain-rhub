@@ -1,0 +1,12 @@
+.1
+Failed -------------------------------------------------------------------------
+1. Failure: sub (@test_math.R#20) ----------------------------------------------
+`res` not equal to `expeceted_res`.
+1/1 mismatches
+[1] -1 - -2 == 1
+
+
+DONE ===========================================================================
+         file context test nb failed skipped error warning  user system  real
+1 test_math.R          add  1      0   FALSE FALSE       0 0.004      0 0.004
+2 test_math.R          sub  1      1   FALSE FALSE       0 0.044      0 0.046
