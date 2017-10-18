@@ -1,0 +1,7 @@
+version: "2"
+services:
+  rpackages:
+    build:
+      context: .
+      dockerfile: Dockerfile-packages
+

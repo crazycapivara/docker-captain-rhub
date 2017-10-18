@@ -1,0 +1,12 @@
+FROM rocker/r-base
+
+LABEL maintainer="<crazycapivara@gmail.com>"
+
+RUN install2.r testthat
+
+ADD ./packages /packages
+
+WORKDIR /packages
+
+CMD ["R", "CMD", "check", "mobyr_0.1.0.tar.gz", "--no-manual"]
+
