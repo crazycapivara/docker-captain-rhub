@@ -1,3 +1,4 @@
-/express_app/scripts/node_modules/
-/express_app/scripts/package-lock.json
+express_app/scripts/node_modules/
+express_app/scripts/package-lock.json
+nginx-rstudio/html/
 
