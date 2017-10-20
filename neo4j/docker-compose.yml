@@ -1,0 +1,17 @@
+version: "2"
+services:
+  neo4j:
+    image: neo4j
+    environment:
+      - NEO4J_AUTH=neo4j/bender
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+  terminal:
+    image: crazycapivara/r-base-neo4j
+    volumes:
+      - ./scripts:/scripts
+    depends_on:
+      - neo4j
+    command: ["./wait-for-it.sh", "neo4j:7474", "--", "Rscript", "rstudio_pkgs.R", "Rcpp", "dplyr"]
+
