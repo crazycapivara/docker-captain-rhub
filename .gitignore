@@ -2,3 +2,5 @@ express_app/scripts/node_modules/
 express_app/scripts/package-lock.json
 nginx-rstudio/html/
 miniCRAN/repo/
+bookdown/book/_book/
+
