@@ -1,6 +1,6 @@
 library(miniCRAN)
 
-pkgs <- c("magrittr")
+pkgs <- c("magrittr", "dplyr")
 
 pkgList <- pkgDep(pkgs, suggests = FALSE)
 
