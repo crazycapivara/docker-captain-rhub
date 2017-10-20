@@ -1,0 +1,17 @@
+_section {
+  font-size: 1.7em !important;
+}
+
+.page-inner {
+  max-width: 1200px !important;
+  border: 2px solid blue;
+}
+
+h1 {
+  margin-top: 0 !important;
+  text-align: center;
+}
+
+h4 {
+  text-align: center;
+}

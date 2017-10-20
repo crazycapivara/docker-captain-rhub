@@ -1,0 +1,175 @@
+---
+title: "Captian RHub meets MobyR"
+author: "Stefan Küthe"
+site: bookdown::bookdown_site
+output:
+  bookdown::gitbook:
+    css: include/fry.css
+---
+```{r, echo=FALSE}
+knitr::opts_chunk$set(
+  fig.align = "center"
+)
+```
+# Preface {-}
+
+```{r, echo=FALSE, out.width="40%"}
+knitr::include_graphics("pix/rocker.png")
+```
+
+# Docker?
+
+```{r, echo=FALSE, out.width="70%"}
+knitr::include_graphics("pix/containers.png")
+```
+
+# Images
+
+An __image__ is a set of layers as defined in the `Dockerfile`.
+
+_"An __image__ is a lightweight, stand-alone, executable package that includes everything needed to run a piece of software,
+including the code, a runtime, libraries, environment variables, and config files."_
+
+```{bash, eval=FALSE}
+# Search for an image
+$ docker search rocker
+
+# Pull an image from the hub
+$ docker pull rocker/shiny
+
+# Show local images
+$ docker images
+```
+
+# Container
+
+A __container__ is an instance of an __image__.
+
+_"A __container__ is a runtime instance of an __image__ - what the __image__ becomes in memory when actually executed.
+It runs completely isolated from the host environment by default, only accessing host files and ports if configured to do so."_
+
+```{bash, eval=FALSE}
+# Start a container
+$ docker run -p 3838:3838 -d rocker/shiny
+
+# -p ~ publish port to the world
+# -d ~ run in detached mode
+
+# List running container
+$ docker ps
+
+# List stopped container as well
+$ docker ps -a
+```
+
+# Dockerfile
+
+```{bash, eval=FALSE}
+FROM rocker/r-base
+
+LABEL maintainer="stefan kueteh <crazycapivara@gmail.com>"
+
+RUN install2.r rmarkdown formatR bookdown
+
+ADD ./book /book
+
+WORKDIR /book
+
+RUN apt-get update && apt-get install pandoc -y \
+        && rm -rf /var/lib/apt/lists/*
+```
+
+# Load balancer
+
+# Cluster?
+
+## Docker Swarm
+
+https://docker.com
+
+## Kubernetes
+
+https://kubernetes.io/
+
+## Rancher
+
+http://rancher.com/
+
+## ...
+
+# Orchestrierung ~ Docker Swarm
+
+Seit Version 1.12 bietet Docker eine integrierte Cluster-Implementierung an.
+
+```{bash, eval=FALSE}
+$ docker swarm
+$ docker node
+$ docker service
+
+# Create a manager (node)
+$ docker swarm init --advertise-addr 192.168.99.100
+
+# Generate token needed to join manager
+$ docker swarm join-token worker
+
+# Add a worker (node)
+$ docker swarm join --token [...] 192.168.99.100:2377
+
+# List nodes
+$ docker node ls
+
+# Deploy a service
+$ docker service create --replicas 1 --name helloworld alpine ping docker.com
+```
+
+# Orchestrierung ~ Rancher
+
+```{r, echo=FALSE, out.width="40%"}
+knitr::include_graphics("pix/rancher.png")
+```
+
+http://rancher.com/
+
+## Features
+
+- Web-GUI
+- can manage
+    - Docker Swarm
+    - Kubernetes
+
+## Installation
+
+```{bash, eval=FALSE}
+## Management node (server)
+$ docker run -d --restart=unless-stopped -p 8080:8080 rancher/server 
+
+## Add workers (agents)
+$ docker run -d [...] rancher/agent [...]token
+```
+
+# Orchestrierung ~ Kubernetes (Google)
+
+```{r, echo=FALSE, out.width="40%"}
+knitr::include_graphics("pix/kubernetes.png")
+```
+
+https://kubernetes.io/
+
+# Docker-compose
+
+```{bash, eval=FALSE}
+version: "2"
+services:
+  minicran:
+    image: crazycapivara/minicran
+    volumes:
+      - ./scripts:/scripts
+      - ./repo:/miniCRAN
+    command: r /scripts/create_repo.R
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./repo:/usr/share/nginx/html
+```
