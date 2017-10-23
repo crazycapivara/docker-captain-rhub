@@ -1,8 +1,7 @@
 version: "2"
 services:
   rstudio:
-    #image: rocker/rstudio
-    build: .
+    image: rocker/rstudio
     ports:
       - "8787:8787"
   metabase:
