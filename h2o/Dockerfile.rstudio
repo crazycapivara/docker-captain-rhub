@@ -1,0 +1,10 @@
+FROM rocker/rstudio
+
+LABEL maintainer="<crazycapivara@gmail.com>"
+
+RUN install2.r h2o
+
+ADD ./scripts /home/rstudio/scripts
+
+RUN chown -R rstudio:rstudio /home/rstudio/scripts
+

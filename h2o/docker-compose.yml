@@ -1,0 +1,14 @@
+version: "2"
+services:
+  h2oai:
+    build: .
+    command:  java -Xmx4g -jar /opt/h2o.jar
+    ports:
+      - "54321:54321"
+  rstudio:
+    build:
+      context: .
+      dockerfile: Dockerfile.rstudio
+    ports:
+      - "9797:8787"
+  
