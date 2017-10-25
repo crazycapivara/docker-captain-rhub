@@ -3,4 +3,5 @@ express_app/scripts/package-lock.json
 nginx-rstudio/html/
 miniCRAN/repo/
 bookdown/book/_book/
+ci-gogs-drone/gogs-data/
 
