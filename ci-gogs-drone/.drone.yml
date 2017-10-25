@@ -1,0 +1,29 @@
+#workspace:
+#  base: /code
+#  path: drone/src/192.168.70.111/bender/fry
+
+pipeline:
+  build:
+    image: rocker/r-base
+    #image: ci_r
+    commands:
+      #- R -e "print(tail(iris))"
+      #- R -e "x <- 1:10; y <- sin(x); print(y)"
+      #- ls /drone/src/192.168.70.111/bender/fry
+      #- cd /drone/src/192.168.70.111/bender/fry && Rscript my_script.R
+      - Rscript my_script.R
+  test:
+    image: ci_r
+    commands:
+      #- cd /scripts/
+      - cd scripts && Rscript run_tests.R
+
+ # services:
+ #   myr:
+ #     build: .
+ #     image: cc
+    #environment:
+    #  - DOCKER_HOST=tcp://127.0.0.1:2375
+    #commands:
+    #  - docker build -t "cc" .
+

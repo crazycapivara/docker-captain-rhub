@@ -1,0 +1,30 @@
+version: '2'
+
+services:
+  drone-server:
+    image: drone/drone:0.8
+    volumes:
+       - ./data-drone:/var/lib/drone/
+    ports:
+       - "8060:8000"
+       - "9000:9000"
+    environment:
+      - DRONE_OPEN=true
+      - DRONE_HOST=http://192.168.70.111
+      - DRONE_GOGS=true
+      - DRONE_GOGS_URL=http://192.168.70.111:3033
+      - DRONE_SECRET=bender
+
+  drone-agent:
+    image: drone/agent:0.8
+    command: agent
+    restart: always
+    depends_on:
+      - drone-server
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - DOCKER_API_VERSION=1.24
+      - DRONE_SERVER=drone-server:9000
+      #- DRONE_SERVER=ws://drone-server:8000/ws/broker
+      - DRONE_SECRET=bender
