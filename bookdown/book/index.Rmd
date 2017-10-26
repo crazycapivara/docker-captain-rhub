@@ -124,9 +124,7 @@ CMD ["R"]
 ## docker-compose.yml
 
 ```{bash, eval=FALSE}
-# ---
 # docker-compose.yml
-# ---
 
 version: "2"
 services:
@@ -150,9 +148,8 @@ docker-compose up
 ## >
 
 ```{r, eval=FALSE}
-# ---
 # create_repo.R
-# ---
+
 library(miniCRAN)
 
 pkgs <- c("magrittr", "dplyr")
@@ -183,6 +180,29 @@ services:
 # run it ...
 docker-compose up -d \
   && docker-compose scale shiny=3
+```
+
+# Continious Integration
+
+## Drone meets Gogs
+
+```{r, echo=FALSE, out.width="20%"}
+knitr::include_graphics("pix/droneio.png")
+knitr::include_graphics("pix/gogs.png")
+```
+
+```{bash, eval=FALSE}
+# start gogs
+docker run -p --name=gogs -p 10022:22 -p 10080:3000 -v /var/gogs:/data gogs/gogs
+
+# .drone.yml
+
+pipeline:
+  build:
+    image: rocker/r-base
+      commands:
+      - cd /scripts/
+      - Rscript run_tests.R
 ```
 
 # Cluster?
