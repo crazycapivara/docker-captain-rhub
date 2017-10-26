@@ -1,0 +1,14 @@
+version: "2"
+services:
+  shiny:
+    image: rocker/shiny  
+  lb:
+    image: dockercloud/haproxy
+    ports:
+      - "5080:80"
+      - "1936:1936"
+    links:
+      - shiny
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+

@@ -161,9 +161,29 @@ CRAN_mirror <- "https://mran.microsoft.com/snapshot/2017-08-01"
 makeRepo(pkgList, path = "/miniCRAN", repos = CRAN_mirror, type=c("source", "win.binary"))
 ```
 
-## Scale that
+## Scale and balance that
 
-## Balancer that
+```{bash, eval=FALSE}
+# docker-compose.yml
+
+version: "2"
+services:
+  shiny:
+    image: rocker/shiny
+  lb:
+    image: dockercloud/haproxy
+    ports:
+      - "5080:80"
+      - "1936:1936"
+    links:
+      - shiny
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+# run it ...
+docker-compose up -d \
+  && docker-compose scale shiny=3
+```
 
 # Cluster?
 
