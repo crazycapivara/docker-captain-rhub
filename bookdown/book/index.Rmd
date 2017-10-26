@@ -4,13 +4,18 @@ author: "Stefan Küthe"
 site: bookdown::bookdown_site
 output:
   bookdown::gitbook:
+    number_sections: false
+    split_by: section
+    mathjax: null
     css: include/fry.css
 ---
 ```{r, echo=FALSE}
 knitr::opts_chunk$set(
-  fig.align = "center"
+  fig.align = "center",
+  eval = TRUE
 )
 ```
+
 # Preface {-}
 
 ```{r, echo=FALSE, out.width="40%"}
@@ -21,6 +26,17 @@ knitr::include_graphics("pix/rocker.png")
 
 ```{r, echo=FALSE, out.width="70%"}
 knitr::include_graphics("pix/containers.png")
+```
+
+## > vs VM {-}
+
+```{r, echo=FALSE, out.width="40%", out.extra='style="float: left;"'}
+knitr::include_graphics("pix/docker-vs-vm_vm.png")
+knitr::include_graphics("pix/docker-vs-vm_docker.png")
+```
+
+```{block, type="bender"}
+Move pix!
 ```
 
 # Images
@@ -66,20 +82,88 @@ $ docker ps -a
 
 ```{bash, eval=FALSE}
 FROM rocker/r-base
-
-LABEL maintainer="stefan kueteh <crazycapivara@gmail.com>"
-
+LABEL maintainer="stefan kuethe <crazycapivara@gmail.com>"
 RUN install2.r rmarkdown formatR bookdown
-
 ADD ./book /book
-
 WORKDIR /book
-
 RUN apt-get update && apt-get install pandoc -y \
         && rm -rf /var/lib/apt/lists/*
 ```
 
-# Load balancer
+## Containerit {-}
+
+Create `Dockerfile` with R package `containerit`
+
+```{r, eval=FALSE}
+devtools::install_github("r-hub/sysreqs")
+devtools::install_github("o2r-project/containerit")
+
+library(containerit)
+
+dockerfile(from = sessionInfo()) %>%
+  write("Dockerfile")
+```
+
+## >
+
+```{bash, eval=FALSE}
+FROM rocker/r-ver:3.4.1
+LABEL maintainer="n3ud"
+RUN export DEBIAN_FRONTEND=noninteractive; apt-get -y update \
+ && apt-get install -y git-core \
+	pandoc \
+	pandoc-citeproc
+RUN ["install2.r", "-r 'https://cloud.r-project.org'", "Rcpp", ... "jsonlite"]
+WORKDIR /payload/
+CMD ["R"]
+
+```
+
+# Docker-compose
+
+## docker-compose.yml
+
+```{bash, eval=FALSE}
+# ---
+# docker-compose.yml
+# ---
+
+version: "2"
+services:
+  minicran:
+    image: crazycapivara/minicran
+    volumes:
+      - ./scripts:/scripts
+      - ./repo:/miniCRAN
+    command: r /scripts/create_repo.R
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./repo:/usr/share/nginx/html
+
+# start services
+docker-compose up
+```
+
+## >
+
+```{r, eval=FALSE}
+# ---
+# create_repo.R
+# ---
+library(miniCRAN)
+
+pkgs <- c("magrittr", "dplyr")
+pkgList <- pkgDep(pkgs, suggests = FALSE)
+CRAN_mirror <- "https://mran.microsoft.com/snapshot/2017-08-01"
+makeRepo(pkgList, path = "/miniCRAN", repos = CRAN_mirror, type=c("source", "win.binary"))
+```
+
+## Scale that
+
+## Balancer that
 
 # Cluster?
 
@@ -155,21 +239,3 @@ knitr::include_graphics("pix/kubernetes.png")
 
 https://kubernetes.io/
 
-# Docker-compose
-
-```{bash, eval=FALSE}
-version: "2"
-services:
-  minicran:
-    image: crazycapivara/minicran
-    volumes:
-      - ./scripts:/scripts
-      - ./repo:/miniCRAN
-    command: r /scripts/create_repo.R
-  nginx:
-    image: nginx:alpine
-    ports:
-      - "8080:80"
-    volumes:
-      - ./repo:/usr/share/nginx/html
-```
