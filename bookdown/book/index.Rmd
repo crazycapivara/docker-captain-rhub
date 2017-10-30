@@ -28,7 +28,7 @@ knitr::include_graphics("pix/rocker.png")
 knitr::include_graphics("pix/containers.png")
 ```
 
-## > vs VM {-}
+## vs VM {-}
 
 ```{r, echo=FALSE, out.width="40%", out.extra='style="float: left;"'}
 knitr::include_graphics("pix/docker-vs-vm_vm.png")
@@ -37,6 +37,11 @@ knitr::include_graphics("pix/docker-vs-vm_docker.png")
 
 ```{block, type="bender"}
 Move pix!
+```
+## with VM
+
+```{r, echo=FALSE, out.width="70%"}
+knitr::include_graphics("pix/containers-vms-together.png")
 ```
 
 # Images
@@ -117,6 +122,30 @@ RUN ["install2.r", "-r 'https://cloud.r-project.org'", "Rcpp", ... "jsonlite"]
 WORKDIR /payload/
 CMD ["R"]
 
+```
+
+# Rocker
+
+Rocker images ...
+
+# Networks
+
+```{r, echo=FALSE}
+knitr::include_graphics("pix/bridge_network.png")
+```
+
+```
+$ docker network create futurama
+$ docker run --network futurama postgres
+```
+
+```{r, echo=FALSE}
+knitr::include_graphics("pix/network_access.png")
+```
+
+```
+$ docker network create futurama
+$ docker run --network futurama -p 8787:8787 futurama rocker/rstudio
 ```
 
 # Docker-compose
