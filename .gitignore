@@ -4,4 +4,5 @@ nginx-rstudio/html/
 miniCRAN/repo/
 bookdown/book/_book/
 ci-gogs-drone/gogs-data/
+gitlab-ci/repos/
 
