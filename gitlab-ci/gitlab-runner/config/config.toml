@@ -1,0 +1,16 @@
+concurrent = 1
+check_interval = 0
+
+[[runners]]
+  name = "bender"
+  url = "http://192.168.70.111:9090/"
+  token = "3bd3d65fd0fe66bcece672a2eb7603"
+  executor = "docker"
+  [runners.docker]
+    tls_verify = false
+    image = "rocker/r-base"
+    privileged = false
+    disable_cache = false
+    volumes = ["/cache"]
+    shm_size = 0
+  [runners.cache]
