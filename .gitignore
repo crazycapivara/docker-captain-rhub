@@ -5,4 +5,7 @@ miniCRAN/repo/
 bookdown/book/_book/
 ci-gogs-drone/gogs-data/
 gitlab-ci/repos/
+gitlab-ci/logs/
+gitlab-ci/data/
+gitlab-ci/config/
 
