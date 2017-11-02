@@ -3,7 +3,7 @@ services:
   gitlab:
     image: "gitlab/gitlab-ce:latest"
     #restart: always
-    hostname: 'bender'
+    hostname: '192.168.70.111'
     environment:
       GITLAB_OMNIBUS_CONFIG: |
         external_url 'http://192.168.70.111:9090'

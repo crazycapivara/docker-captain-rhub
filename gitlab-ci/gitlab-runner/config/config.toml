@@ -8,9 +8,17 @@ check_interval = 0
   executor = "docker"
   [runners.docker]
     tls_verify = false
-    image = "rocker/r-base"
+    image = "rocker/rstudio"
     privileged = false
     disable_cache = false
-    volumes = ["/cache"]
+    volumes = ["/home/bender/tmp:/gitlab_ci", "/cache"]
     shm_size = 0
+    pull_policy = "never"
+  [runners.cache]
+
+[[runners]]
+  name = "shell"
+  url = "http://192.168.70.111:9090/"
+  token = "18966edfa44fb133af631ba1b2fbe1"
+  executor = "shell"
   [runners.cache]
