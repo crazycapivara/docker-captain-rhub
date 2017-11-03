@@ -4,14 +4,14 @@ _section {
 
 .page-inner {
   max-width: 1200px !important;
-  border: 2px solid blue;
+  _border: 2px solid blue;
 }
 
 h1 {
   margin-top: 0 !important;
-  text-align: center;
+  _text-align: center;
 }
 
 h4 {
-  text-align: center;
+  _text-align: center;
 }

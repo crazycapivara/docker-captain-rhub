@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Preface {-}
+# Build, Ship and Run Shiny Data Science, Anywhere!
 
 ```{r, echo=FALSE, eval=TRUE, out.width="40%"}
 knitr::include_graphics("pix/rocker.png")
@@ -28,21 +28,33 @@ knitr::include_graphics("pix/rocker.png")
 knitr::include_graphics("pix/containers.png")
 ```
 
-## vs VM {-}
+## Containers versus Virtual Machines
 
 ```{r, echo=FALSE, eval=TRUE, out.width="40%", out.extra='style="float: left;"'}
 knitr::include_graphics("pix/docker-vs-vm_vm.png")
 knitr::include_graphics("pix/docker-vs-vm_docker.png")
 ```
 
-```{block, type="bender"}
-Move pix!
-```
-## with VM
+<div style="clear: both;"></div>
+
+
+## Containers together with Virtual Machines
 
 ```{r, echo=FALSE, eval=TRUE, out.width="70%"}
 knitr::include_graphics("pix/containers-vms-together.png")
 ```
+
+## Installation
+
+Ubuntu
+
+```{bash}
+$ apt-get install docker.io
+```
+
+MAC, Windows, other Linuxes, ...
+
+- https://www.docker.com/community-edition
 
 # Images
 
@@ -62,7 +74,70 @@ $ docker pull rocker/shiny
 $ docker images
 ```
 
-# Container
+## Docker Hub
+
+https://hub.docker.com
+
+### Programming langues
+
+- r-base
+- python
+- nodejs
+- golang
+- julia
+- ...
+
+### Databases
+
+- mongodb
+- postgresql
+- mysql
+- neo4j
+- ...
+
+### Webservers
+
+- nginx
+- httpd
+- tomcat
+- ...
+
+### OSs
+
+- ubuntu
+- alpine
+- centos
+- ...
+
+### ...
+
+- hello-world
+- ...
+
+```{r, echo=FALSE, eval=TRUE}
+#knitr::include_graphics("pix/docker-hub.png")
+```
+
+## Rocker Hub on Docker Hub
+
+```{r, echo=FALSE, eval=TRUE,  out.width="20%"}
+knitr::include_graphics("pix/rocker.png")
+```
+
+- https://hub.docker.com/r/rocker/
+- https://github.com/rocker-org/rocker
+
+Images
+
+- rocker/r-base
+- rocker/shiny
+- rocker/tidyverse
+- rocker/rstudio
+- rocker/geospatial
+- rocker/r-ver
+- ...
+
+# Containers
 
 A __container__ is an instance of an __image__.
 
@@ -83,21 +158,16 @@ $ docker ps
 $ docker ps -a
 ```
 
-# Docker Hub
+# Docker hierarchy
 
-```{r, echo=FALSE, eval=TRUE}
-knitr::include_graphics("pix/docker-hub.png")
-```
-https://hub.docker.com
-
-# Rocker Hub
-
-```{r, echo=FALSE, eval=TRUE}
-knitr::include_graphics("pix/rocker-hub.png")
-```
-
-- https://hub.docker.com/r/rocker/
-- https://github.com/rocker-org/rocker
+- Container:
+    - define it with a `Dockerfile`
+- Service:
+    - combine, scale and balance containers: `docker-compose.yml` 
+- Swarm:
+    - dockerized cluster with a manager and workers: `docker swarm`, `kubernetes`, `rancher`, ...
+- Stack:
+    - handle services 
 
 # Dockerfile
 
@@ -123,7 +193,7 @@ $ docker run -it --rm stkuethe/rbook:v0.1
 
 ## Containerit
 
-Create `Dockerfile` with R package `containerit`
+Create a `Dockerfile` with the R package `containerit`
 
 ```{r, eval=FALSE}
 devtools::install_github("r-hub/sysreqs")
@@ -268,7 +338,7 @@ $ docker run -d --network futurama -p 8787:8787 futurama rocker/rstudio
 $ docker run -it --rm --network futurama alpine ping -c 2 postgres 
 ```
 
-# Docker-compose
+# Docker Compose
 
 _Compose is a tool for defining and running multi-container Docker applications._
 
