@@ -146,10 +146,11 @@ It runs completely isolated from the host environment by default, only accessing
 
 ```{bash, eval=FALSE}
 # Start a container
-$ docker run -p 3838:3838 -d rocker/shiny
+$ docker run -p 3838:3838 -v /data:/data -d rocker/shiny
 
 # -p ~ publish port to the world
 # -d ~ run in detached mode
+# -v ~ mount host volume in the container
 
 # List running container
 $ docker ps
@@ -218,6 +219,20 @@ RUN ["install2.r", "-r 'https://cloud.r-project.org'", "Rcpp", ... "jsonlite"]
 WORKDIR /payload/
 CMD ["R"]
 
+```
+
+# Workflow ???
+
+
+```
+Git repo
+========
+- scripts/
+- Dockerfile
+
+$ git pull
+$ docker build ...
+$ docker run ...
 ```
 
 # Docker CLI
@@ -344,6 +359,14 @@ _Compose is a tool for defining and running multi-container Docker applications.
 
 ## Config file
 
+Compatibility matrix
+
+- https://docs.docker.com/compose/compose-file/
+
+Version 2
+
+- https://docs.docker.com/compose/compose-file/compose-file-v2/
+
 ```{bash, eval=FALSE}
 # docker-compose.yml
 
@@ -438,6 +461,7 @@ WORKDIR /scripts
 ```
 
 ### Script
+
 ```{r}
 # rstudio_pkgs.R
 library(RNeo4j)
@@ -494,7 +518,7 @@ res <- cypher(graph, query)
 print(res)
 ```
 
-### Docker-compose
+### Docker compose
 
 ```{bash}
 version: "2"
@@ -518,6 +542,8 @@ services:
 
 ## h2oai
 
+### Dockerfiles
+
 ```{bash}
 $ wget https://raw.githubusercontent.com/h2oai/h2o-3/master/Dockerfile
 
@@ -527,7 +553,11 @@ LABEL maintainer="<crazycapivara@gmail.com>"
 RUN install2.r h2o
 ADD ./scripts /home/rstudio/scripts
 RUN chown -R rstudio:rstudio /home/rstudio/scripts
+```
 
+### Docker compose
+
+```{bash}
 # docker-compose.yml
 version: "2"
 
@@ -547,21 +577,372 @@ services:
 $ docker-compose up -d
 ```
 
+### Script
+
+```{r}
+# use_h2oai.R
+suppressPackageStartupMessages(library(h2o))
+
+# package version should match server version
+try(h2o.init("h2oai"), silent = TRUE)
+
+# show available data frames on the server
+h2o.ls()
+
+# add data
+cat("Add data\n")
+iris_train <- as.h2o(iris[, 1:4], "iris_train")
+iris_validate <- as.h2o(iris, "iris_validate")
+
+# show available data frames on the server
+h2o.ls()
+
+# build the model
+cat("Build the model\n")
+iris_kmeans <- h2o.kmeans(iris_train, k = 3, model_id = "iris_kmeans", init = "Random")
+
+# predict and show result
+cat("Predict that\n")
+iris_predict <- h2o.predict(iris_kmeans, iris_validate)
+res <- as.data.frame(h2o.cbind(iris_validate, iris_predict))
+print(res)
+```
+
 ## tensorflow
 
-...
+### Run RStudio and TensorFlow
 
-## Plumber
+```{bash}
+docker run -d --name tensor_flow -p 8686:8787 -v `pwd`/scripts:/home/rstudio/scripts earthlab/r-tensorflow
+```
 
-...
+### Scripts
 
-## CRAN stats
+Test installation
 
-...
+```{r}
+# hello_world.R
+library(tensorflow)
+
+sess = tf$Session()
+hello <- tf$constant('Hello, TensorFlow!')
+sess$run(hello)
+```
+
+Real world example
+
+```{r}
+# example.R
+library(tensorflow)
+
+# Create 100 phony x, y data points, y = x * 0.1 + 0.3
+x_data <- runif(100, min = 0, max = 1)
+y_data <- x_data * 0.1 + 0.3
+
+# Try to find values for W and b that compute y_data = W * x_data + b
+# (We know that W should be 0.1 and b 0.3, but TensorFlow will
+# figure that out for us.)
+W <- tf$Variable(tf$random_uniform(shape(1L), -1.0, 1.0))
+b <- tf$Variable(tf$zeros(shape(1L)))
+y <- W * x_data + b
+
+# Minimize the mean squared errors.
+loss <- tf$reduce_mean((y - y_data) ^ 2)
+optimizer <- tf$train$GradientDescentOptimizer(0.5)
+train <- optimizer$minimize(loss)
+
+# Launch the graph and initialize the variables.
+sess = tf$Session()
+sess$run(tf$initialize_all_variables())
+
+# Fit the line (Learns best fit is W: 0.1, b: 0.3)
+for (step in 1:201) {
+  sess$run(train)
+  if (step %% 20 == 0)
+    cat(step, "-", sess$run(W), sess$run(b), "\n")
+}
+```
+
+## plumber
+
+### Dockerfile
+
+```{bash}
+FROM rocker/r-base
+LABEL maintainer="Stefan Kuethe <crazycapivara@gmail.com>"
+RUN apt-get update -qq && apt-get install -y libxml2-dev
+RUN install2.r plumber xml2 base64enc
+ADD ./scripts /endpoints
+EXPOSE 8000
+ENTRYPOINT ["R", "-e", "pr <- plumber::plumb(commandArgs()[4]); pr$run(host = '0.0.0.0', port = 8000, swagger = TRUE)"]
+CMD ["/endpoints/rstudio_rss-feed.R"]
+```
+
+### Endpoints
+
+RStudio rss feed
+
+```{r}
+# rstudio_rss-feed.R
+library(xml2)
+library(magrittr)
+
+rss_feed <- "https://blog.rstudio.com/index.xml"
+
+#* @get /rstudio_rss_feed
+rstudio_rss_feed <- function() {
+  rss <- read_xml(rss_feed)
+  items <- xml_find_all(rss, ".//item")
+  titles <- xml_find_all(items, ".//title") %>%
+    xml_text()
+  links <- xml_find_all(items, ".//link") %>%
+    xml_text()
+  data.frame(header = titles, link = links)
+}
+```
+
+Images
+
+```{r}
+library(base64enc)
+
+#* @get /plot_that
+#* @png
+plot_that <- function() {
+  x <- seq(1, 10, 0.1)
+  y <- sin(x)
+  plot(x, y, type = "l")
+}
+
+#* @get /plot_base64
+plot_base64 <- function() {
+  x <- seq(1, 10, 0.1)
+  y <- sin(x)
+  tmp <- tempfile()
+  png(tmp)
+  plot(x, y, type = "l")
+  dev.off()
+  paste("data:image/png;base64,", base64encode(tmp))
+}
+```
+
+Blog
+
+```{r}
+library(xml2)
+library(magrittr)
+
+rss_feed <- "https://blog.rstudio.com/index.xml"
+
+#* @get /rstudio_rss_feed
+rstudio_rss_feed <- function() {
+  rss <- read_xml(rss_feed)
+  items <- xml_find_all(rss, ".//item")
+  titles <- xml_find_all(items, ".//title") %>%
+    xml_text()
+  links <- xml_find_all(items, ".//link") %>%
+    xml_text()
+  data.frame(header = titles, link = links, stringsAsFactors = FALSE)
+}
+
+library(tm)
+
+#* @get /rocket_science/<count>
+rocket_science <- function(headers = NULL, count = 2, lang= "english") {
+  if (is.null(headers)) {
+    headers <- rstudio_rss_feed()$header
+  }
+  docs <- Corpus(VectorSource(enc2native(headers))) %>%
+    tm_map(content_transformer(tolower)) %>%
+    tm_map(removePunctuation) %>%
+    tm_map(removeWords, enc2native(stopwords(lang))) %>%
+    tm_map(removeNumbers) %>%
+    tm_map(stripWhitespace)
+  tdm <- TermDocumentMatrix(docs)
+  findFreqTerms(tdm, as.integer(count))
+}
+
+blog <- "https://blog.eoda.de"
+
+eoda_blog <- function(page = 1) {
+  xml <- sprintf("%s/page/%i/", blog, page) %>%
+    read_html()
+  items <- xml_find_all(xml, ".//article")
+  xml_find_all(items, ".//header/h2") %>%
+    xml_text()
+}
+
+#* @get /eoda_blog
+eoda_blog_ <- function(last_page = 3) {
+  lapply(1:last_page, eoda_blog) %>%
+    unlist()
+}
+
+#* @get /blog_that
+blog_that <- function(count = 3) {
+  rocket_science(eoda_blog_(), count = count, lang = "de")
+}
+```
+
+### Run and test
+
+```{bash}
+$ docker run -d -p 8011:8000 --name plumber \
+    -v `pwd`/scripts:/endpoints crazycapivara/plumber r /endpoints/serve_that.R
+
+curl -s http://localhost:8011/blog_that?count=4 | jq
+```
+
+### Use in other apps
+
+```{python}
+# app.py
+from flask import Flask, render_template
+import requests
+
+api = "http://plumber:8000/rstudio_news"
+
+def get_news():
+   response = requests.get(api)
+   data = response.json()
+   response.close()
+   return data
+
+app = Flask(__name__)
+
+@app.route("/")
+def hello():
+   return render_template("rstudio_news.html", news = get_news())
+
+if __name__ == "__main__":
+   app.run(host = "0.0.0.0", debug = True)
+
+```
+
+```{bash}
+# docker-compose.yml
+version: "2"
+
+services:
+  plumber:
+    image: crazycapivara/plumber:rstudio_news
+  flask:
+    image: crazycapivara/flask
+    command: app.py
+    ports:
+      - "5005:5000"
+```
+
+## CRAN stats with metabase and mongodb
+
+### Dockerfile
+
+```{bash}
+FROM rocker/rstudio
+LABEL maintainer="<crazycapivara@gmail.com>"
+RUN apt-get update \
+      && apt-get install -y libssl-dev libsasl2-dev
+RUN install2.r mongolite remotes httr \
+      && installGithub.r metacran/cranlogs
+ADD ./scripts /home/rstudio/scripts
+```
+
+### Docker Compose
+
+```{bash}
+version: "2"
+
+services:
+  rstudio:
+    build: .
+    ports:
+      - "8787:8787"
+  metabase:
+    image: metabase/metabase
+    ports:
+      - "3015:3000"
+  mongodb:
+    image: mongo
+    ports:
+      - "27020:27017"
+```
+
+### Script
+
+```{r}
+# dl_stats.R
+library(cranlogs)
+library(mongolite)
+
+argv <- commandArgs(TRUE)
+
+# get logs
+cat("Fetch logs\n")
+pkgs <- c("shiny", "shinydashboard", "rmarkdown", "leaflet")
+if(!is.na(argv[1])) {
+  pkgs <- argv[1]
+}
+print(pkgs)
+logs <- cran_downloads(pkgs, when = "last-month")
+print(tail(logs))
+
+# write logs to db
+db <- "rstudio"
+collection <- "cranlogs"
+
+cat("insert data\n")
+conn <- mongo(collection, db = db, url="mongodb://mongodb")
+eat_msg <- conn$insert(logs)
+cat("done\n")
+```
+### Add data
+
+```{bash}
+$ docker run -it --rm -v `pwd`/scripts:/scripts \
+    --network futurama example_rstudio Rscript /scripts/dl_stats.R ggplot
+```
 
 ## bookdown 
 
-...
+### Dockerfile
+
+```{bash}
+FROM rocker/r-base
+LABEL maintainer="crazycapivara@gmail.com"
+RUN install2.r rmarkdown formatR bookdown
+ADD ./book /book
+WORKDIR /book
+RUN apt-get update && apt-get install pandoc -y \
+        && rm -rf /var/lib/apt/lists/*
+```
+
+### Render book
+
+```{bash}
+# render_book.R
+library(bookdown)
+
+render_book(".")
+```
+
+```{bash}
+$ docker run -it --rm \
+    -v `pwd`/book:/book \
+    crazycapivara/r-base-bookdown r render_book.R
+```
+
+### Serve book
+
+```{bash}
+version: "2"
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./book/_book:/usr/share/nginx/html:ro
+```
 
 # Continious Integration
 
@@ -672,19 +1053,20 @@ deploy:
     - cp that.csv /www/public
 ```
 
-## Drone meets Gogs
+## Drone
 
 https://drone.io/
 
-Lighweight
+Lightweight
 
 ```{r, echo=FALSE, eval=TRUE, out.width="20%"}
 knitr::include_graphics("pix/droneio.png")
-knitr::include_graphics("pix/gogs.png")
+#knitr::include_graphics("pix/gogs.png")
 ```
 
-Other Integrations:
+Integrations:
 
+- Gogs
 - GitLab
 - Github
 - Bitbucket
@@ -749,6 +1131,10 @@ pipeline:
 
 http://www.concourse.ci/
 
+Lightweight
+
+### Docker compose
+
 ```{bash}
 Version: '3'
 
@@ -787,6 +1173,39 @@ services:
     volumes: ["./keys/worker:/concourse-keys"]
     environment:
       CONCOURSE_TSA_HOST: concourse-web
+```
+
+### Tasks
+
+```{bash}
+# task.yml
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: rocker/r-base
+
+inputs:
+  - name: bender
+
+run:
+  path: ./bender/build.sh
+
+```
+
+```{bash}
+# build.sh
+#!/bin/sh
+set -e -x
+
+install2.r magrittr
+
+Rscript -e "library(magrittr);iris %>% head() %>% print()"
+```
+
+```{bash}
+$ fly -t example execute -c ci/task.yml
 ```
 
 # Cluster?
