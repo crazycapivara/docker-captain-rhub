@@ -1,0 +1,15 @@
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: rocker/r-base
+
+inputs:
+  - name: bender
+
+run:
+  path: ./bender/build.sh
+  #path: Rscript
+  #args: ["bender/my-scripts/test.R"]
+  #args: ["-e", "print(4)"]

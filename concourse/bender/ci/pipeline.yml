@@ -1,0 +1,7 @@
+jobs:
+  - name: science
+    plan:
+      - get: bender
+      - task: silly
+        file: bender/ci/task.yml
+
