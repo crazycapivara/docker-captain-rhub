@@ -292,7 +292,6 @@ RUN export DEBIAN_FRONTEND=noninteractive; apt-get -y update \
 RUN ["install2.r", "-r 'https://cloud.r-project.org'", "Rcpp", ... "jsonlite"]
 WORKDIR /payload/
 CMD ["R"]
-
 ```
 
 # Data in Docker
@@ -301,12 +300,57 @@ CMD ["R"]
 knitr::include_graphics("pix/types-of-mounts.png")
 ```
 
-- __volumes:__ stored in a part of the host filesystem which is __managed by Docker__
-- __bind mounts:__ may be stored __anywhere__ on the host system
-- `tmpfs` __mounts:__ stored in the host system’s memory only, and are never written to the host system’s filesystem
+- __volumes:__
+    - stored in a part of the host filesystem which is __managed by Docker__
+- __bind mounts:__
+    - may be stored __anywhere__ on the host system
+- `tmpfs` __mounts:__
+    - stored in the host system’s memory only, and are never written to the host system’s filesystem
+
+## Bind mounts
 
 ```{bash}
-$ docker ...
+$ docker run -v /scripts:/rocket-science rocker/rbase r /rocket-science/go.R
+```
+
+```{r, echo=FALSE, eval=TRUE}
+knitr::include_graphics("pix/types-of-mounts-bind.png")
+```
+
+## Volumes
+
+```{bash}
+$ docker volume create --name shiny-data
+$ docker -v shiny-data:/srv/shiny-server rocker/shiny
+```
+
+```{r, echo=FALSE, eval=TRUE}
+knitr::include_graphics("pix/types-of-mounts-volume.png")
+```
+
+```{bash}
+$ docker volume ls
+$ docker volume inspect shiny-data
+[
+    {
+        "Name": "shiny-data",
+        "Driver": "local",
+        "Mountpoint": "/var/lib/docker/volumes/shiny-data/_data",
+        "Labels": {},
+        "Scope": "local"
+    }
+]
+
+```
+
+## tmpfs
+
+```{bash}
+$ docker run --tmpfs /rocket-science -it rocker/rbase /bin/bash
+```
+
+```{r, echo=FALSE, eval=TRUE}
+knitr::include_graphics("pix/types-of-mounts-tmpfs.png")
 ```
 
 # Docker hierarchy
@@ -390,6 +434,8 @@ $ docker inspect
 # Pipelines
 
 Combine different programming languages ...
+
+!!! use `docker create volume` here !!!
 
 ```{bash}
 #!/bin/sh
