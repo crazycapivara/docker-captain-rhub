@@ -244,6 +244,20 @@ CMD ["R"]
 
 ```
 
+# Data in Docker
+
+```{r, echo=FALSE, eval=TRUE}
+knitr::include_graphics("pix/types-of-mounts.png")
+```
+
+- __volumes:__ stored in a part of the host filesystem which is __managed by Docker__
+- __bind mounts:__ may be stored __anywhere__ on the host system
+- `tmpfs` __mounts:__ stored in the host system’s memory only, and are never written to the host system’s filesystem
+
+```{bash}
+$ docker ...
+```
+
 # Docker hierarchy
 
 - Container:
@@ -364,7 +378,7 @@ with open("/scripts/random_update.csv") as f:
     print(row)
 ```
 
-# Networks
+# Networks and port forwarding
 
 ```{r, echo=FALSE, eval=TRUE}
 knitr::include_graphics("pix/bridge_network.png")
