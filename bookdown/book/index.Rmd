@@ -137,9 +137,60 @@ Images
 - rocker/r-ver
 - ...
 
+## Manual builds
+
+```{bash}
+# Enter bash inside a container
+$ docker run -it --name mobyr rocker/r-base /bin/bash
+
+# Do some stuff ...
+mobyr/ $ install2.r magrittr RNeo4j
+
+# Leave container
+mobyr/ $ exit
+
+# Commit changes
+$ docker commit -m "Add magrittr and RNeo4j" mobyr kuethe/mobyr:0.1 
+
+# Push image to Dockerhub
+$ docker login
+$ docker push mobyr
+```
+
+Is this the way we should create images?
+
+- Nope!
+- Use a `Dockerfile`!
+
 ## Automatic builds
 
-- Github + Dockerhub
+- Dockerhub + Github
+
+## Deploy your own registry
+
+A registry is an instance of the registry image, and runs within Docker.
+
+```{bash}
+# Start registry on port 5000
+$ docker run -d \
+    -p 5000:5000 \
+    -e REGISTRY_HTTP_ADDR=0.0.0.0:5000
+    --restart=always \
+    --name registry registry:2
+```
+
+Without cert, ups ...
+
+```{bash}
+# /etc/docker/damon.json
+{
+  "insecure-registries": ["my-registry.com:5000"]
+}
+```
+
+```{bash}
+$ docker push my-registry.com/mobyr
+```
 
 # Containers
 
@@ -199,7 +250,7 @@ $ docker ps -s
 FROM rocker/r-base
 LABEL maintainer="stefan kuethe <crazycapivara@gmail.com>"
 RUN install2.r rmarkdown formatR bookdown
-ADD ./book /book
+COPY ./book /book
 WORKDIR /book
 RUN apt-get update && apt-get install pandoc -y \
         && rm -rf /var/lib/apt/lists/*
@@ -210,9 +261,9 @@ CMD ["r", "render_book.R"]
 ## Build and run
 
 ```{bash}
-$ docker build -t "stkuethe/rbook:v0.1" .
+$ docker build -t "kuethe/gitbook:0.1" .
 
-$ docker run -it --rm stkuethe/rbook:v0.1
+$ docker run -it --rm kuethe/gitbook:0.1
 ```
 
 ## Containerit
