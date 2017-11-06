@@ -137,6 +137,10 @@ Images
 - rocker/r-ver
 - ...
 
+## Automatic builds
+
+- Github + Dockerhub
+
 # Containers
 
 A __container__ is an instance of an __image__.
@@ -159,16 +163,35 @@ $ docker ps
 $ docker ps -a
 ```
 
-# Docker hierarchy
+# Images and layers
 
-- Container:
-    - define it with a `Dockerfile`
-- Service:
-    - combine, scale and balance containers: `docker-compose.yml` 
-- Swarm:
-    - dockerized cluster with a manager and workers: `docker swarm`, `kubernetes`, `rancher`, ...
-- Stack:
-    - handle services 
+```{r, echo=FALSE, eval=TRUE}
+knitr::include_graphics("pix/container-layers.jpg")
+```
+
+- A Docker image is built up from a series of layers.
+- Each layer represents an instruction in the image’s `Dockerfile`.
+- Each layer except the very last one is read-only.
+
+# Containers and layers
+
+```{r, echo=FALSE, eval=TRUE}
+knitr::include_graphics("pix/sharing-layers.jpg")
+```
+
+- The major difference between a container and an image is the top writable layer.
+- All writes to the container that add new or modify existing data are stored in this writable layer.
+- When the container is deleted, the writable layer is also deleted.
+- The underlying image remains unchanged.
+
+# Container size on disk
+
+```{bash}
+$ docker ps -s
+```
+
+- __size:__ disk space used for the writable layer
+- __virtual size:__ disk space used for the read-only image data used by the container
 
 # Dockerfile
 
@@ -221,8 +244,19 @@ CMD ["R"]
 
 ```
 
-# Workflow ???
+# Docker hierarchy
 
+- Container:
+    - define it with a `Dockerfile`
+- Service:
+    - combine, scale and balance containers: `docker-compose.yml` 
+- Swarm:
+    - dockerized cluster with a manager and workers: `docker swarm`, `kubernetes`, `rancher`, ...
+- Stack:
+    - handle services 
+
+
+# Workflow ???
 
 ```
 Git repo
