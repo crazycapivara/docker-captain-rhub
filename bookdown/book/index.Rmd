@@ -241,8 +241,10 @@ knitr::include_graphics("pix/sharing-layers.jpg")
 $ docker ps -s
 ```
 
-- __size:__ disk space used for the writable layer
-- __virtual size:__ disk space used for the read-only image data used by the container
+- __size:__
+    - disk space used for the writable layer
+- __virtual size:__
+    - disk space used for the read-only image data used by the container
 
 # Dockerfile
 
@@ -284,7 +286,7 @@ dockerfile(from = sessionInfo()) %>%
 
 ```{bash, eval=FALSE}
 FROM rocker/r-ver:3.4.1
-LABEL maintainer="stkuethe"
+LABEL maintainer="kuethe"
 RUN export DEBIAN_FRONTEND=noninteractive; apt-get -y update \
  && apt-get install -y git-core \
 	pandoc \
@@ -355,7 +357,7 @@ knitr::include_graphics("pix/types-of-mounts-tmpfs.png")
 
 # Docker hierarchy
 
-- Container:
+- Image/Container:
     - define it with a `Dockerfile`
 - Service:
     - combine, scale and balance containers: `docker-compose.yml` 

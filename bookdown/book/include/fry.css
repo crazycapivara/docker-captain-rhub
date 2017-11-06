@@ -7,7 +7,7 @@ _section {
   _border: 2px solid blue;
 }
 
-h1 {
+h1, h2 {
   margin-top: 0 !important;
   _text-align: center;
 }
