@@ -1,0 +1,15 @@
+pipeline:
+  build:
+    image: rocker/rstudio
+    commands:
+      - sleep 5
+      - ping -c 1 mongodb
+      - apt-get update && apt-get install -y libssl-dev libsasl2-dev
+      - install2.r mongolite
+      - Rscript -e "print(head(iris))"
+      - Rscript scripts/mongo_that.R
+
+services:
+  mongodb:
+    image: mongo
+

@@ -1,0 +1,4 @@
+check .drone.yml in this folder
+
+maybe you need to set an older api version:
+export DOCKER_API_VERSION=1.24

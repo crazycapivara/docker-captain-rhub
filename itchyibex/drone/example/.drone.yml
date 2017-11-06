@@ -1,0 +1,24 @@
+pipeline:
+  rocket:
+    image: rocker/rstudio
+    commands:
+      - ls
+      - install2.r magrittr
+      - Rscript -e "library(magrittr); iris %>% head() %>% print(); write.csv(iris, 'that.csv')"
+  science:
+    image: rocker/rstudio
+    commands:
+      - ls
+      - cat that.csv
+  deploy:
+    image: alpine
+    commands:
+      - echo This is rocket science
+      - cp that.csv /inside
+      - rm that.csv
+      - ls /inside
+    volumes:
+      - /tmp:/inside
+    when:
+      status: success
+
