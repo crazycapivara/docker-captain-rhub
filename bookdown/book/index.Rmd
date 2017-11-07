@@ -920,6 +920,12 @@ for (step in 1:201) {
 
 ## plumber
 
+https://www.rplumber.io
+
+```{r, echo=FALSE, eval=TRUE}
+knitr::include_graphics("pix/plumber.png")
+```
+
 ### Dockerfile
 
 ```{bash}
@@ -1496,23 +1502,25 @@ Submitting local task
 $ fly -t example execute -c ci/task.yml
 ```
 
-# Cluster?
+# Orchestrierung
+
+```{r, echo=FALSE, eval=TRUE, out.width="60%"}
+knitr::include_graphics("pix/docker-stacks.png")
+```
+
+- __Docker Swarm__
+    - https://docker.com
+- __Kubernetes__
+    - https://kubernetes.io
+- __Rancher__
+    - http://rancher.com
+- ...
 
 ## Docker Swarm
 
-https://docker.com
-
-## Kubernetes
-
-https://kubernetes.io/
-
-## Rancher
-
-http://rancher.com/
-
-## ...
-
-# Orchestrierung ~ Docker Swarm
+```{r, echo=FALSE, eval=TRUE, out.width="50%"}
+knitr::include_graphics("pix/docker-swarm-logo.png")
+```
 
 Seit Version 1.12 bietet Docker eine integrierte Cluster-Implementierung an.
 
@@ -1537,22 +1545,20 @@ $ docker node ls
 $ docker service create --replicas 1 --name helloworld alpine ping docker.com
 ```
 
-# Orchestrierung ~ Rancher
+## Rancher
 
 ```{r, echo=FALSE, eval=TRUE, out.width="40%"}
 knitr::include_graphics("pix/rancher.png")
 ```
 
-http://rancher.com/
-
-## Features
+### Features
 
 - Web-GUI
 - can manage
     - Docker Swarm
     - Kubernetes
 
-## Installation
+### Installation
 
 ```{bash, eval=FALSE}
 ## Management node (server)
@@ -1562,11 +1568,42 @@ $ docker run -d --restart=unless-stopped -p 8080:8080 rancher/server
 $ docker run -d [...] rancher/agent [...]token
 ```
 
-# Orchestrierung ~ Kubernetes (Google)
+### Browse Web-GUI
+
+- http://localhost:8080
+
+## Kubernetes (Google)
 
 ```{r, echo=FALSE, eval=TRUE, out.width="40%"}
 knitr::include_graphics("pix/kubernetes.png")
 ```
 
-https://kubernetes.io/
+Check
+ 
+- https://kubernetes.io
+
+# More container runtime engines?
+
+http://cri-o.io 
+
+- RedHat
+- _Lightweight Container Runtime for Kubernetes_
+
+https://coreos.com/rkt/
+
+- CoreOS
+- _[...] rkt also plays a central role in how Google Container Image and CoreOS Container Linux run Kubernetes. [...]_
+
+# Hey ho
+
+So long, and thanx for all the fish.
+
+- _Stefan Kuethe_ <crazycapivara@gmail.com>
+- _Github:_ https://github.com/crazycapivara
+- _Dockerhub:_ https://hub.docker.com/r/crazycapivara/
+
+```{r, echo=FALSE, eval=TRUE, out.width="30%"}
+knitr::include_graphics("pix/catkeyboard-docker.png")
+```
+
 
