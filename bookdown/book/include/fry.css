@@ -1,3 +1,15 @@
+.book.font-family-0 {
+  font-family: Vollkorn, serif;
+}
+
+.book.font-family-1 {
+  font-family: "Open Sans Condensed", sans-serif;
+}
+
+nav, .book-header h1 {
+  font-family: "PT Sans", Vollkorn, sans-serif;
+}
+
 _section {
   font-size: 1.7em !important;
 }
@@ -7,8 +19,9 @@ _section {
   _border: 2px solid blue;
 }
 
-h1, h2 {
+h1, h2, h3, h4{
   margin-top: 0 !important;
+  _font-weight: 300;
   _text-align: center;
 }
 

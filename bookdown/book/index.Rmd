@@ -8,6 +8,8 @@ output:
     split_by: section
     mathjax: null
     css: include/fry.css
+    include:
+      in_header: include/in_header.html
 ---
 ```{r, echo=FALSE}
 knitr::opts_chunk$set(
@@ -19,7 +21,7 @@ knitr::opts_chunk$set(
 # Build, Ship and Run Shiny Data Science, Anywhere!
 
 ```{r, echo=FALSE, eval=TRUE, out.width="40%"}
-knitr::include_graphics("pix/rocker.png")
+knitr::include_graphics("pix/docker-engine.png")
 ```
 
 # Docker?
@@ -55,13 +57,10 @@ knitr::include_graphics("pix/gopher.png")
 
 ## Containers versus Virtual Machines
 
-```{r, echo=FALSE, eval=TRUE, out.width="40%", out.extra='style="float: left;"'}
-knitr::include_graphics("pix/docker-vs-vm_vm.png")
-knitr::include_graphics("pix/docker-vs-vm_docker.png")
+```{r, echo=FALSE, eval=TRUE, out.width="80%"}
+#knitr::include_graphics("pix/docker-vs-vm_vm.png")
+knitr::include_graphics("pix/docker-vs-vm.png")
 ```
-
-<div style="clear: both;"></div>
-
 
 ## Containers together with Virtual Machines
 
@@ -1208,6 +1207,38 @@ services:
       - ./book/_book:/usr/share/nginx/html:ro
 ```
 
+## ShinyProxy
+
+https://www.shinyproxy.io
+
+Runs on the host
+
+```{bash}
+# Dockerfile
+FROM openanalytics/r-base
+...
+EXPOSE 3838
+CMD ["R", "-e shiny::runApp('/root/euler')"]
+```
+
+```{bash}
+docker build -t openanalytics/shinyproxy-template
+```
+
+```{bash}
+# application.yml
+apps:
+  - name: euler
+    display-name: Euler's number
+    docker-cmd: ["R", "-e shiny::runApp('/root/euler')"]
+    docker-image: openanalytics/shinyproxy-template
+    groups: scientists
+```
+
+```{bash}
+java -jar shinyproxy-1.0.1.jar
+```
+
 # Continious Integration
 
 ```{r, echo=FALSE, eval=TRUE}
@@ -1351,7 +1382,9 @@ $ docker run --name=gogs -p 10022:22 -p 10080:3000 -v /var/gogs:/data gogs/gogs
 ### Drone server and agent
 
 ```{bash}
+# docker-compose.yml
 version: '2'
+
 services:
   drone-server:
     image: drone/drone:0.7
@@ -1582,6 +1615,23 @@ Check
  
 - https://kubernetes.io
 
+## Portainer
+
+https://portainer.io
+
+_Portainer is an open-source lightweight management UI which allows you to easily manage your Docker hosts or Swarm clusters_
+
+```{bash}
+$ docker volume create portainer_data
+$ docker run -d -p 9000:9000 \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v portainer_data:/data portainer/portainer
+```
+
+You can also manage swarm clusters with _portainer_
+
+- https://portainer.io/install.html
+
 # More container runtime engines?
 
 http://cri-o.io 
@@ -1589,7 +1639,7 @@ http://cri-o.io
 - RedHat
 - _Lightweight Container Runtime for Kubernetes_
 
-https://coreos.com/rkt/
+https://coreos.com/rkt
 
 - CoreOS
 - _[...] rkt also plays a central role in how Google Container Image and CoreOS Container Linux run Kubernetes. [...]_
@@ -1600,10 +1650,9 @@ So long, and thanx for all the fish.
 
 - _Stefan Kuethe_ <crazycapivara@gmail.com>
 - _Github:_ https://github.com/crazycapivara
-- _Dockerhub:_ https://hub.docker.com/r/crazycapivara/
+- _Dockerhub:_ https://hub.docker.com/r/crazycapivara
 
 ```{r, echo=FALSE, eval=TRUE, out.width="30%"}
 knitr::include_graphics("pix/catkeyboard-docker.png")
 ```
-
 
