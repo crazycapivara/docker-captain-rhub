@@ -28,6 +28,31 @@ knitr::include_graphics("pix/rocker.png")
 knitr::include_graphics("pix/containers.png")
 ```
 
+## About 
+
+- Programming Language: GO
+- Operating System Level Virtualization
+
+```{bash}
+# Spin up 100 containers
+$ time for i in $(seq 1 100); do docker run -d -P --name nginx_$i nginx:alpine; done
+...
+
+real    0m56.476s
+user    0m1.364s
+sys     0m0.860s
+
+
+# Stop and remove ...
+$ for i in $(seq 1 100); do docker stop nginx_$i; done
+$ for i in $(seq 1 100); do docker rm nginx_$i; done
+```
+
+```{r, echo=FALSE, eval=TRUE}
+knitr::include_graphics("pix/gopher.png")
+#knitr::include_graphics("pix/golang-vinyl.jpg")
+```
+
 ## Containers versus Virtual Machines
 
 ```{r, echo=FALSE, eval=TRUE, out.width="40%", out.extra='style="float: left;"'}
@@ -117,6 +142,18 @@ https://hub.docker.com
 ```{r, echo=FALSE, eval=TRUE}
 #knitr::include_graphics("pix/docker-hub.png")
 ```
+
+## Offical images
+
+- https://hub.docker.com/explore/
+- Ensure that security updates are applied in a timely manner. 
+- Provide essential base OS repositories.
+- Use _best practices_ and and provide clear documentation
+
+Offical R image
+
+- https://store.docker.com/images/r-base
+- https://docs.docker.com/samples/library/r-base/
 
 ## Rocker Hub on Docker Hub
 
@@ -355,6 +392,53 @@ $ docker run --tmpfs /rocket-science -it rocker/rbase /bin/bash
 knitr::include_graphics("pix/types-of-mounts-tmpfs.png")
 ```
 
+## At build time
+
+`COPY` and `ADD`
+
+- `ADD` allows `<src>` to be an _URL_
+- If the `<src>` parameter of `ADD` is an archive in a recognised compression format, it will be unpacked.
+
+```{bash}
+# Dockerfiles
+
+COPY /scripts /scripts
+ADD /scripts /scripts
+```
+
+## Copy data from and to running containers
+
+```{bash}
+# from container to local filesystem
+$ docker cp CONTAINER:SRC_PATH DEST_PATH
+
+# from local filesystem to container
+$ docker cp CONTAINER:SRC_PATH DEST_PATH
+```
+
+# Networks and port forwarding
+
+```{r, echo=FALSE, eval=TRUE}
+knitr::include_graphics("pix/bridge_network.png")
+```
+
+```
+$ docker network create futurama
+$ docker run -d --network futurama --name postgres postgres:9.5.6-alpine
+$ docker network inspect futurama | jq ".[].Containers"
+```
+
+```{r, echo=FALSE, eval=TRUE}
+knitr::include_graphics("pix/network_access.png")
+```
+
+```
+$ docker network create futurama
+$ docker run -d --network futurama -p 8787:8787 futurama rocker/rstudio
+
+$ docker run -it --rm --network futurama alpine ping -c 2 postgres 
+```
+
 # Docker hierarchy
 
 - Image/Container:
@@ -362,12 +446,12 @@ knitr::include_graphics("pix/types-of-mounts-tmpfs.png")
 - Service:
     - combine, scale and balance containers: `docker-compose.yml` 
 - Swarm:
-    - dockerized cluster with a manager and workers: `docker swarm`, `kubernetes`, `rancher`, ...
+    - dockerized cluster with a manager and workers: _docker swarm_, _kubernetes_, _rancher_, ...
 - Stack:
     - handle services 
 
 
-# Workflow ???
+# Simple manual workflow ???
 
 ```
 Git repo
@@ -383,7 +467,6 @@ $ docker run ...
 # Docker CLI
 
 ```{bash, eval=FALSE}
-
 # Search a registry for images, defaults to the docker hub
 $ docker search
 
@@ -437,13 +520,19 @@ $ docker inspect
 
 Combine different programming languages ...
 
-!!! use `docker create volume` here !!!
+```{bash}
+# rocket_science.sh
+#!/bin/sh
+docker run --rm -it -v /scripts:/scripts julia julia /scripts/random.jl
+docker run --rm -it -v /scripts:/scripts rocker/r-base r /scripts/multiply.R
+docker run --rm -it -v /scripts:/scripts continuumio/miniconda3 python /scripts/print_that.py
+```
+
+Maybe you want to use a cronjob to run it every 10 minutes ...
 
 ```{bash}
-#!/bin/sh
-docker run --rm -it -v `pwd`/scripts:/scripts julia julia /scripts/random.jl
-docker run --rm -it -v `pwd`/scripts:/scripts rocker/r-base r /scripts/multiply.R
-docker run --rm -it -v `pwd`/scripts:/scripts continuumio/miniconda3 python /scripts/print_that.py
+# crontab
+*/10 * * * * /sbin/rocket_science.sh >>/var/log/cronrun
 ```
 
 ## Julia script
@@ -477,32 +566,15 @@ with open("/scripts/random_update.csv") as f:
     print(row)
 ```
 
-# Networks and port forwarding
-
-```{r, echo=FALSE, eval=TRUE}
-knitr::include_graphics("pix/bridge_network.png")
-```
-
-```
-$ docker network create futurama
-$ docker run -d --network futurama --name postgres postgres:9.5.6-alpine
-$ docker network inspect futurama | jq ".[].Containers"
-```
-
-```{r, echo=FALSE, eval=TRUE}
-knitr::include_graphics("pix/network_access.png")
-```
-
-```
-$ docker network create futurama
-$ docker run -d --network futurama -p 8787:8787 futurama rocker/rstudio
-
-$ docker run -it --rm --network futurama alpine ping -c 2 postgres 
-```
-
 # Docker Compose
 
 _Compose is a tool for defining and running multi-container Docker applications._
+
+```{r, echo=FALSE, eval=TRUE}
+knitr::kable(
+  data.frame("Compose file format" = c("...", "3.0", "...", "2.0"), "Docker Engine release" = c("...", "1.13.0+", "...", "1.10.0+"), check.names = FALSE)
+)
+```
 
 ## Config file
 
@@ -550,21 +622,28 @@ makeRepo(pkgList, path = "/miniCRAN", repos = CRAN_mirror, type=c("source", "win
 ## Start and stop services
 
 ```{bash}
-# start services
+# Start services
 $ docker-compose up -d
 
-# stop services
+# Stop services
+$ docker-compose stop
+
+# Remove services
 $ docker-compose down
 ```
 
-# Scale and balance that
+## Load balancer
 
-## Load Balancer ~ haproxy
+HAProxy
+
+- http://www.haproxy.org/
+- https://github.com/docker/dockercloud-haproxy
 
 ```{bash, eval=FALSE}
 # docker-compose.yml
 
 version: "2"
+
 services:
   shiny:
     image: rocker/shiny
@@ -586,7 +665,36 @@ docker-compose up -d \
   && docker-compose scale shiny=3
 ```
 
-# Some more use cases/examples
+Since version 2.2 file format also in `docker-compose.yml`
+
+```{bash}
+services:
+  shiny:
+    image: rocker/shiny
+    scale: 3
+```
+
+## Deploy
+
+- Version 3 only
+- only takes effect in _swarm mode_
+
+```{bash}
+version: '3'
+
+services:
+  redis:
+    image: redis:alpine
+    deploy:
+      replicas: 6
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+     condition: on-failure
+```
+
+# Some more examples
 
 - neo4j
 - h2oai
@@ -601,9 +709,9 @@ docker-compose up -d \
 
 ```{bash}
 FROM rocker/rstudio
-LABEL maintaner="stkuethe <crazycapivara@gmail.com>"
+LABEL maintaner="kuethe <crazycapivara@gmail.com>"
 RUN install2.r RNeo4j
-ADD ./scripts /scripts
+COPY ./scripts /scripts
 WORKDIR /scripts
 ```
 
@@ -696,9 +804,9 @@ $ wget https://raw.githubusercontent.com/h2oai/h2o-3/master/Dockerfile
 
 # Dockerfile.rstudio
 FROM rocker/rstudio
-LABEL maintainer="<crazycapivara@gmail.com>"
+LABEL maintainer="kuethe <crazycapivara@gmail.com>"
 RUN install2.r h2o
-ADD ./scripts /home/rstudio/scripts
+COPY ./scripts /home/rstudio/scripts
 RUN chown -R rstudio:rstudio /home/rstudio/scripts
 ```
 
@@ -818,8 +926,8 @@ for (step in 1:201) {
 FROM rocker/r-base
 LABEL maintainer="Stefan Kuethe <crazycapivara@gmail.com>"
 RUN apt-get update -qq && apt-get install -y libxml2-dev
-RUN install2.r plumber xml2 base64enc
-ADD ./scripts /endpoints
+RUN install2.r plumber xml2 base64enci tm
+COPY ./scripts /endpoints
 EXPOSE 8000
 ENTRYPOINT ["R", "-e", "pr <- plumber::plumb(commandArgs()[4]); pr$run(host = '0.0.0.0', port = 8000, swagger = TRUE)"]
 CMD ["/endpoints/rstudio_rss-feed.R"]
@@ -991,7 +1099,7 @@ RUN apt-get update \
       && apt-get install -y libssl-dev libsasl2-dev
 RUN install2.r mongolite remotes httr \
       && installGithub.r metacran/cranlogs
-ADD ./scripts /home/rstudio/scripts
+COPY ./scripts /home/rstudio/scripts
 ```
 
 ### Docker Compose
@@ -1042,11 +1150,12 @@ conn <- mongo(collection, db = db, url="mongodb://mongodb")
 eat_msg <- conn$insert(logs)
 cat("done\n")
 ```
+
 ### Add data
 
 ```{bash}
 $ docker run -it --rm -v `pwd`/scripts:/scripts \
-    --network futurama example_rstudio Rscript /scripts/dl_stats.R ggplot
+    --network futurama crazycapivara/rstudio Rscript /scripts/dl_stats.R ggplot
 ```
 
 ## bookdown 
@@ -1055,9 +1164,9 @@ $ docker run -it --rm -v `pwd`/scripts:/scripts \
 
 ```{bash}
 FROM rocker/r-base
-LABEL maintainer="crazycapivara@gmail.com"
+LABEL maintainer="<crazycapivara@gmail.com>"
 RUN install2.r rmarkdown formatR bookdown
-ADD ./book /book
+COPY ./book /book
 WORKDIR /book
 RUN apt-get update && apt-get install pandoc -y \
         && rm -rf /var/lib/apt/lists/*
@@ -1073,7 +1182,7 @@ render_book(".")
 ```
 
 ```{bash}
-$ docker run -it --rm \
+$ docker run -t --rm \
     -v `pwd`/book:/book \
     crazycapivara/r-base-bookdown r render_book.R
 ```
@@ -1081,7 +1190,9 @@ $ docker run -it --rm \
 ### Serve book
 
 ```{bash}
+# docker-compose.yml
 version: "2"
+
 services:
   nginx:
     image: nginx:alpine
@@ -1098,16 +1209,21 @@ services:
 knitr::include_graphics("pix/gitlab-pipelines2.png")
 ```
 
+- Gitlab
+- Drone
+- Concourse
+- ...
+
 ## Gitlab CI
 
-https://about.gitlab.com/
-
-All in one
+- https://about.gitlab.com
+- All in one
+- Requirements: 4GB min
 
 ### Gitlab Container
 
 ```{bash}
-# Gitlab
+# docker-compose.yml
 version: "2"
 
 services:
@@ -1171,7 +1287,6 @@ $ docker exec -it gitlab-runner gitlab-runner register
 
 ```{bash}
 # .gitlab-ci.yml
-
 stages:
   - julia
   - r
@@ -1202,9 +1317,9 @@ deploy:
 
 ## Drone
 
-https://drone.io/
-
-Lightweight
+- https://drone.io
+- Lightweight
+- Local builds via _drone CLI_ (runs containers on the local host)
 
 ```{r, echo=FALSE, eval=TRUE, out.width="20%"}
 knitr::include_graphics("pix/droneio.png")
@@ -1265,20 +1380,44 @@ services:
 
 ```{bash}
 # .drone.yml
-
 pipeline:
-  build:
-    image: rocker/r-base
-      commands:
-      - cd /scripts/
-      - Rscript run_tests.R
+  rocket:
+    image: rocker/rstudio
+    commands:
+      - install2.r magrittr
+      - Rscript -e "library(magrittr); iris %>% head() %>% print(); write.csv(iris, 'that.csv')"
+  science:
+    image: rocker/rstudio
+    commands:
+      - cat that.csv
+  deploy:
+    image: alpine
+    commands:
+      - echo This is rocket science
+      - cp that.csv /inside
+      - rm that.csv
+    volumes:
+      - /tmp:/inside
+    when:
+      status: success
+```
+
+Run local build
+
+```{bash}
+# Install drone CLI
+$ curl -L https://github.com/drone/drone-cli/releases/download/v0.8.0/drone_linux_amd64.tar.gz | tar zx
+$ install -t /usr/local/bin drone
+
+# Run task
+$ drone exec .drone.yml
 ```
 
 ## Concourse
 
-http://www.concourse.ci/
-
-Lightweight
+- http://www.concourse.ci
+- Lightweight
+- local builds/tasks via _fly_ (runs containers on the server)
 
 ### Docker compose
 
@@ -1350,6 +1489,8 @@ install2.r magrittr
 
 Rscript -e "library(magrittr);iris %>% head() %>% print()"
 ```
+
+Submitting local task
 
 ```{bash}
 $ fly -t example execute -c ci/task.yml
