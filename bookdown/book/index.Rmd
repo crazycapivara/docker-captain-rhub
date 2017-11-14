@@ -58,7 +58,6 @@ knitr::include_graphics("pix/gopher.png")
 ## Containers versus Virtual Machines
 
 ```{r, echo=FALSE, eval=TRUE, out.width="80%"}
-#knitr::include_graphics("pix/docker-vs-vm_vm.png")
 knitr::include_graphics("pix/docker-vs-vm.png")
 ```
 
@@ -87,7 +86,7 @@ An __image__ is a set of layers as defined in the `Dockerfile`.
 _"An __image__ is a lightweight, stand-alone, executable package that includes everything needed to run a piece of software,
 including the code, a runtime, libraries, environment variables, and config files."_
 
-```{bash, eval=FALSE}
+```{bash}
 # Search for an image
 $ docker search rocker
 
@@ -102,7 +101,7 @@ $ docker images
 
 https://hub.docker.com
 
-### Programming langues
+### Programming languages
 
 - r-base
 - python
@@ -138,16 +137,12 @@ https://hub.docker.com
 - hello-world
 - ...
 
-```{r, echo=FALSE, eval=TRUE}
-#knitr::include_graphics("pix/docker-hub.png")
-```
-
 ## Offical images
 
 - https://hub.docker.com/explore/
 - Ensure that security updates are applied in a timely manner. 
 - Provide essential base OS repositories.
-- Use _best practices_ and and provide clear documentation
+- Use _best practices_ and and provide clear documentation.
 
 Offical R image
 
@@ -190,7 +185,7 @@ $ docker commit -m "Add magrittr and RNeo4j" mobyr kuethe/mobyr:0.1
 
 # Push image to Dockerhub
 $ docker login
-$ docker push mobyr
+$ docker push kuethe/mobyr:0.1
 ```
 
 Is this the way we should create images?
@@ -220,12 +215,15 @@ Without cert, ups ...
 ```{bash}
 # /etc/docker/damon.json
 {
-  "insecure-registries": ["my-registry.com:5000"]
+  "insecure-registries": ["captain-rhub.de:5000"]
 }
 ```
 
+Push image to local registry
+
 ```{bash}
-$ docker push my-registry.com/mobyr
+$ docker tag kuethe/mobyr:0.1 captain-rhub.de:5000/mobyr
+$ docker push captain-rhub.de:5000/mobyr
 ```
 
 # Containers
@@ -235,7 +233,7 @@ A __container__ is an instance of an __image__.
 _"A __container__ is a runtime instance of an __image__ - what the __image__ becomes in memory when actually executed.
 It runs completely isolated from the host environment by default, only accessing host files and ports if configured to do so."_
 
-```{bash, eval=FALSE}
+```{bash}
 # Start a container
 $ docker run -p 3838:3838 -v /data:/data -d rocker/shiny
 
@@ -275,6 +273,10 @@ knitr::include_graphics("pix/sharing-layers.jpg")
 
 ```{bash}
 $ docker ps -s
+
+IMAGE            SIZE 
+registry:2       0 B (virtual 33.21 MB)
+rocker/rstudio   5.468 kB (virtual 1.061 GB)
 ```
 
 - __size:__
@@ -282,17 +284,26 @@ $ docker ps -s
 - __virtual size:__
     - disk space used for the read-only image data used by the container
 
+# Container statistics
+
+```
+# Display a live stream of container(s) resource usage statistics
+$ docker stats
+```
+
 # Dockerfile
 
 ```{bash, eval=FALSE}
 FROM rocker/r-base
 LABEL maintainer="stefan kuethe <crazycapivara@gmail.com>"
+# Install additional R-packages 
 RUN install2.r rmarkdown formatR bookdown
 COPY ./book /book
 WORKDIR /book
+# Install pandoc
 RUN apt-get update && apt-get install pandoc -y \
         && rm -rf /var/lib/apt/lists/*
-
+# Render book on startup
 CMD ["r", "render_book.R"]
 ```
 
@@ -301,7 +312,7 @@ CMD ["r", "render_book.R"]
 ```{bash}
 $ docker build -t "kuethe/gitbook:0.1" .
 
-$ docker run -it --rm kuethe/gitbook:0.1
+$ docker run --rm kuethe/gitbook:0.1
 ```
 
 ## Containerit
@@ -378,13 +389,13 @@ $ docker volume inspect shiny-data
         "Scope": "local"
     }
 ]
-
 ```
 
 ## tmpfs
 
 ```{bash}
-$ docker run --tmpfs /rocket-science -it rocker/rbase /bin/bash
+$ docker run --tmpfs /rocket-science -it --name mobyr rocker/r-base /bin/bash
+mobyr / $ touch /rocket-science/my-script.R
 ```
 
 ```{r, echo=FALSE, eval=TRUE}
@@ -424,7 +435,6 @@ knitr::include_graphics("pix/bridge_network.png")
 ```
 $ docker network create futurama
 $ docker run -d --network futurama --name postgres postgres:9.5.6-alpine
-$ docker network inspect futurama | jq ".[].Containers"
 ```
 
 ```{r, echo=FALSE, eval=TRUE}
@@ -432,10 +442,34 @@ knitr::include_graphics("pix/network_access.png")
 ```
 
 ```
-$ docker network create futurama
-$ docker run -d --network futurama -p 8787:8787 futurama rocker/rstudio
+$ docker run -d --network futurama -p 8787:8787 --name rstudio rocker/rstudio
+$ docker network inspect futurama | jq ".[].Containers"
+{
+  "59e36dd086141d5e6cbe433271b4934ed06132817fe7b82d6e8ea65e3ad3396b": {
+    "Name": "rstudio",
+    "EndpointID": "b9454486816e27d17095a97e60c9b6f829637a16bf719f30032a5a3af59e650f",
+    "MacAddress": "02:42:ac:14:00:03",
+    "IPv4Address": "172.20.0.3/16",
+    "IPv6Address": ""
+  },
+  "fe1f3cf25315b3352de5a032ea3d8c6d3582606a4e15b265d016abe3674d9d3c": {
+    "Name": "postgres",
+    "EndpointID": "ceff985240a907843af3006dbd483eb42e1d0ae278a994d3fe01e4195cee2589",
+    "MacAddress": "02:42:ac:14:00:02",
+    "IPv4Address": "172.20.0.2/16",
+    "IPv6Address": ""
+  }
+}
 
-$ docker run -it --rm --network futurama alpine ping -c 2 postgres 
+# ping postgres inside docker network
+$ docker run --rm --network futurama alpine ping -c 1 postgres 
+PING postgres (172.20.0.2): 56 data bytes
+64 bytes from 172.20.0.2: seq=0 ttl=64 time=0.136 ms
+...
+
+# check whether rstudio is available on port 8787 on localhost
+$ nc -zv localhost 8787
+Connection to localhost 8787 port [tcp/*] succeeded!
 ```
 
 # Docker hierarchy
@@ -443,14 +477,13 @@ $ docker run -it --rm --network futurama alpine ping -c 2 postgres
 - Image/Container:
     - define it with a `Dockerfile`
 - Service:
-    - combine, scale and balance containers: `docker-compose.yml` 
-- Swarm:
+    - combine, scale and balance containers: `docker-compose.yml`
+    - _on a single host_
+- Swarm/Stack:
     - dockerized cluster with a manager and workers: _docker swarm_, _kubernetes_, _rancher_, ...
-- Stack:
-    - handle services 
+    - Stack: deploy/handle services _on multiple hosts_ (extends `docker-compose.yml`) 
 
-
-# Simple manual workflow ???
+# Simple manual workflow
 
 ```
 Git repo
@@ -464,6 +497,8 @@ $ docker run ...
 ```
 
 # Docker CLI
+
+https://docs.docker.com/engine/reference/commandline/cli/
 
 ```{bash, eval=FALSE}
 # Search a registry for images, defaults to the docker hub
@@ -513,6 +548,9 @@ $ docker cp
 
 # Return low-level information on Docker objects
 $ docker inspect 
+
+# Display a live stream of container(s) resource usage statistics
+$ docker stats
 ```
 
 # Pipelines
@@ -587,7 +625,6 @@ Version 2
 
 ```{bash, eval=FALSE}
 # docker-compose.yml
-
 version: "2"
 
 services:
@@ -640,7 +677,6 @@ HAProxy
 
 ```{bash, eval=FALSE}
 # docker-compose.yml
-
 version: "2"
 
 services:
@@ -690,7 +726,7 @@ services:
         parallelism: 2
         delay: 10s
       restart_policy:
-     condition: on-failure
+        condition: on-failure
 ```
 
 # Some more examples
@@ -743,7 +779,7 @@ deps <- lapply(relations, function(relation) {
 })
 
 ## --- setup graph
-graph <- RNeo4j::startGraph("neo4j:7474/db/data", "neo4j", "bender")
+graph <- startGraph("neo4j:7474/db/data", "neo4j", "bender")
 clear(graph, FALSE)
 addConstraint(graph, "rpackage", "name")
 cat("graph initialized\n")
@@ -1109,6 +1145,8 @@ COPY ./scripts /home/rstudio/scripts
 
 ### Docker Compose
 
+Only publish ports from _rstudio_ and _metabase_ to the outer world.
+
 ```{bash}
 version: "2"
 
@@ -1123,8 +1161,6 @@ services:
       - "3015:3000"
   mongodb:
     image: mongo
-    ports:
-      - "27020:27017"
 ```
 
 ### Script
@@ -1158,8 +1194,10 @@ cat("done\n")
 
 ### Add data
 
+Assuming the containers are running in a network called `futurama` and the image build from the `Dockerfile` is available as `crazycapivara/rstudio` ...   
+
 ```{bash}
-$ docker run -it --rm -v `pwd`/scripts:/scripts \
+$ docker run --rm -v `pwd`/scripts:/scripts \
     --network futurama crazycapivara/rstudio Rscript /scripts/dl_stats.R ggplot
 ```
 
@@ -1187,7 +1225,7 @@ render_book(".")
 ```
 
 ```{bash}
-$ docker run -t --rm \
+$ docker run --rm \
     -v `pwd`/book:/book \
     crazycapivara/r-base-bookdown r render_book.R
 ```
@@ -1222,7 +1260,7 @@ CMD ["R", "-e shiny::runApp('/root/euler')"]
 ```
 
 ```{bash}
-docker build -t openanalytics/shinyproxy-template
+$ docker build -t openanalytics/shinyproxy-template .
 ```
 
 ```{bash}
@@ -1236,7 +1274,7 @@ apps:
 ```
 
 ```{bash}
-java -jar shinyproxy-1.0.1.jar
+$ java -jar shinyproxy-1.0.1.jar
 ```
 
 # Continious Integration
@@ -1358,11 +1396,6 @@ deploy:
 - Lightweight
 - Local builds via _drone CLI_ (runs containers on the local host)
 
-```{r, echo=FALSE, eval=TRUE, out.width="20%"}
-knitr::include_graphics("pix/droneio.png")
-#knitr::include_graphics("pix/gogs.png")
-```
-
 Integrations:
 
 - Gogs
@@ -1441,7 +1474,7 @@ pipeline:
       status: success
 ```
 
-Run local build
+Run a local build
 
 ```{bash}
 # Install drone CLI
@@ -1529,7 +1562,7 @@ install2.r magrittr
 Rscript -e "library(magrittr);iris %>% head() %>% print()"
 ```
 
-Submitting local task
+Submitting a local task
 
 ```{bash}
 $ fly -t example execute -c ci/task.yml
