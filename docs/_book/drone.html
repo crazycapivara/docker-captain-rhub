@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Captian RHub meets MobyR</title>
+  <meta name="description" content="Captian RHub meets MobyR">
+  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Captian RHub meets MobyR" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Captian RHub meets MobyR" />
+  
+  
+  
+
+<meta name="author" content="Stefan Küthe">
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="gitlab-ci.html">
+<link rel="next" href="concourse.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+<link href="https://fonts.googleapis.com/css?family=Calligraffitti|Chelsea+Market|Open+Sans+Condensed:300|PT+Sans|Ubuntu:300|Vollkorn" rel="stylesheet">
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="include/fry.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Build, Ship and Run Shiny Data Science, Anywhere!</a></li>
+<li class="chapter" data-level="" data-path="docker.html"><a href="docker.html"><i class="fa fa-check"></i>Docker?</a><ul>
+<li class="chapter" data-level="" data-path="about.html"><a href="about.html"><i class="fa fa-check"></i>About</a></li>
+<li class="chapter" data-level="" data-path="containers-versus-virtual-machines.html"><a href="containers-versus-virtual-machines.html"><i class="fa fa-check"></i>Containers versus Virtual Machines</a></li>
+<li class="chapter" data-level="" data-path="containers-together-with-virtual-machines.html"><a href="containers-together-with-virtual-machines.html"><i class="fa fa-check"></i>Containers together with Virtual Machines</a></li>
+<li class="chapter" data-level="" data-path="installation.html"><a href="installation.html"><i class="fa fa-check"></i>Installation</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="images.html"><a href="images.html"><i class="fa fa-check"></i>Images</a><ul>
+<li class="chapter" data-level="" data-path="docker-hub.html"><a href="docker-hub.html"><i class="fa fa-check"></i>Docker Hub</a><ul>
+<li class="chapter" data-level="" data-path="docker-hub.html"><a href="docker-hub.html#programming-languages"><i class="fa fa-check"></i>Programming languages</a></li>
+<li class="chapter" data-level="" data-path="docker-hub.html"><a href="docker-hub.html#databases"><i class="fa fa-check"></i>Databases</a></li>
+<li class="chapter" data-level="" data-path="docker-hub.html"><a href="docker-hub.html#webservers"><i class="fa fa-check"></i>Webservers</a></li>
+<li class="chapter" data-level="" data-path="docker-hub.html"><a href="docker-hub.html#oss"><i class="fa fa-check"></i>OSs</a></li>
+<li class="chapter" data-level="" data-path="docker-hub.html"><a href="docker-hub.html#section"><i class="fa fa-check"></i>…</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="offical-images.html"><a href="offical-images.html"><i class="fa fa-check"></i>Offical images</a></li>
+<li class="chapter" data-level="" data-path="rocker-hub-on-docker-hub.html"><a href="rocker-hub-on-docker-hub.html"><i class="fa fa-check"></i>Rocker Hub on Docker Hub</a></li>
+<li class="chapter" data-level="" data-path="manual-builds.html"><a href="manual-builds.html"><i class="fa fa-check"></i>Manual builds</a></li>
+<li class="chapter" data-level="" data-path="automatic-builds.html"><a href="automatic-builds.html"><i class="fa fa-check"></i>Automatic builds</a></li>
+<li class="chapter" data-level="" data-path="deploy-your-own-registry.html"><a href="deploy-your-own-registry.html"><i class="fa fa-check"></i>Deploy your own registry</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="containers.html"><a href="containers.html"><i class="fa fa-check"></i>Containers</a></li>
+<li class="chapter" data-level="" data-path="images-and-layers.html"><a href="images-and-layers.html"><i class="fa fa-check"></i>Images and layers</a></li>
+<li class="chapter" data-level="" data-path="containers-and-layers.html"><a href="containers-and-layers.html"><i class="fa fa-check"></i>Containers and layers</a></li>
+<li class="chapter" data-level="" data-path="container-size-on-disk.html"><a href="container-size-on-disk.html"><i class="fa fa-check"></i>Container size on disk</a></li>
+<li class="chapter" data-level="" data-path="container-statistics.html"><a href="container-statistics.html"><i class="fa fa-check"></i>Container statistics</a></li>
+<li class="chapter" data-level="" data-path="dockerfile.html"><a href="dockerfile.html"><i class="fa fa-check"></i>Dockerfile</a><ul>
+<li class="chapter" data-level="" data-path="build-and-run.html"><a href="build-and-run.html"><i class="fa fa-check"></i>Build and run</a></li>
+<li class="chapter" data-level="" data-path="containerit.html"><a href="containerit.html"><i class="fa fa-check"></i>Containerit</a></li>
+<li class="chapter" data-level="" data-path="containerit-output.html"><a href="containerit-output.html"><i class="fa fa-check"></i>Containerit output</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="data-in-docker.html"><a href="data-in-docker.html"><i class="fa fa-check"></i>Data in Docker</a><ul>
+<li class="chapter" data-level="" data-path="bind-mounts.html"><a href="bind-mounts.html"><i class="fa fa-check"></i>Bind mounts</a></li>
+<li class="chapter" data-level="" data-path="volumes.html"><a href="volumes.html"><i class="fa fa-check"></i>Volumes</a></li>
+<li class="chapter" data-level="" data-path="tmpfs.html"><a href="tmpfs.html"><i class="fa fa-check"></i>tmpfs</a></li>
+<li class="chapter" data-level="" data-path="at-build-time.html"><a href="at-build-time.html"><i class="fa fa-check"></i>At build time</a></li>
+<li class="chapter" data-level="" data-path="copy-data-from-and-to-running-containers.html"><a href="copy-data-from-and-to-running-containers.html"><i class="fa fa-check"></i>Copy data from and to running containers</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="networks-and-port-forwarding.html"><a href="networks-and-port-forwarding.html"><i class="fa fa-check"></i>Networks and port forwarding</a></li>
+<li class="chapter" data-level="" data-path="docker-hierarchy.html"><a href="docker-hierarchy.html"><i class="fa fa-check"></i>Docker hierarchy</a></li>
+<li class="chapter" data-level="" data-path="simple-manual-workflow.html"><a href="simple-manual-workflow.html"><i class="fa fa-check"></i>Simple manual workflow</a></li>
+<li class="chapter" data-level="" data-path="docker-cli.html"><a href="docker-cli.html"><i class="fa fa-check"></i>Docker CLI</a></li>
+<li class="chapter" data-level="" data-path="pipelines.html"><a href="pipelines.html"><i class="fa fa-check"></i>Pipelines</a><ul>
+<li class="chapter" data-level="" data-path="julia-script.html"><a href="julia-script.html"><i class="fa fa-check"></i>Julia script</a></li>
+<li class="chapter" data-level="" data-path="r-script.html"><a href="r-script.html"><i class="fa fa-check"></i>R script</a></li>
+<li class="chapter" data-level="" data-path="python-script.html"><a href="python-script.html"><i class="fa fa-check"></i>Python script</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="docker-compose.html"><a href="docker-compose.html"><i class="fa fa-check"></i>Docker Compose</a><ul>
+<li class="chapter" data-level="" data-path="config-file.html"><a href="config-file.html"><i class="fa fa-check"></i>Config file</a></li>
+<li class="chapter" data-level="" data-path="minicran-script.html"><a href="minicran-script.html"><i class="fa fa-check"></i>Minicran script</a></li>
+<li class="chapter" data-level="" data-path="start-and-stop-services.html"><a href="start-and-stop-services.html"><i class="fa fa-check"></i>Start and stop services</a></li>
+<li class="chapter" data-level="" data-path="load-balancer.html"><a href="load-balancer.html"><i class="fa fa-check"></i>Load balancer</a></li>
+<li class="chapter" data-level="" data-path="run-and-scale.html"><a href="run-and-scale.html"><i class="fa fa-check"></i>Run and scale</a></li>
+<li class="chapter" data-level="" data-path="deploy.html"><a href="deploy.html"><i class="fa fa-check"></i>Deploy</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="some-more-examples.html"><a href="some-more-examples.html"><i class="fa fa-check"></i>Some more examples</a><ul>
+<li class="chapter" data-level="" data-path="neo4j.html"><a href="neo4j.html"><i class="fa fa-check"></i>neo4j</a><ul>
+<li class="chapter" data-level="" data-path="neo4j.html"><a href="neo4j.html#dockerfile-1"><i class="fa fa-check"></i>Dockerfile</a></li>
+<li class="chapter" data-level="" data-path="neo4j.html"><a href="neo4j.html#script"><i class="fa fa-check"></i>Script</a></li>
+<li class="chapter" data-level="" data-path="neo4j.html"><a href="neo4j.html#docker-compose-1"><i class="fa fa-check"></i>Docker compose</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="h2oai.html"><a href="h2oai.html"><i class="fa fa-check"></i>h2oai</a><ul>
+<li class="chapter" data-level="" data-path="h2oai.html"><a href="h2oai.html#dockerfiles"><i class="fa fa-check"></i>Dockerfiles</a></li>
+<li class="chapter" data-level="" data-path="h2oai.html"><a href="h2oai.html#docker-compose-2"><i class="fa fa-check"></i>Docker compose</a></li>
+<li class="chapter" data-level="" data-path="h2oai.html"><a href="h2oai.html#script-1"><i class="fa fa-check"></i>Script</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="tensorflow.html"><a href="tensorflow.html"><i class="fa fa-check"></i>tensorflow</a><ul>
+<li class="chapter" data-level="" data-path="tensorflow.html"><a href="tensorflow.html#run-rstudio-and-tensorflow"><i class="fa fa-check"></i>Run RStudio and TensorFlow</a></li>
+<li class="chapter" data-level="" data-path="tensorflow.html"><a href="tensorflow.html#scripts"><i class="fa fa-check"></i>Scripts</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="plumber.html"><a href="plumber.html"><i class="fa fa-check"></i>plumber</a><ul>
+<li class="chapter" data-level="" data-path="plumber.html"><a href="plumber.html#dockerfile-2"><i class="fa fa-check"></i>Dockerfile</a></li>
+<li class="chapter" data-level="" data-path="plumber.html"><a href="plumber.html#endpoints"><i class="fa fa-check"></i>Endpoints</a></li>
+<li class="chapter" data-level="" data-path="plumber.html"><a href="plumber.html#run-and-test"><i class="fa fa-check"></i>Run and test</a></li>
+<li class="chapter" data-level="" data-path="plumber.html"><a href="plumber.html#use-in-other-apps"><i class="fa fa-check"></i>Use in other apps</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="cran-stats-with-metabase-and-mongodb.html"><a href="cran-stats-with-metabase-and-mongodb.html"><i class="fa fa-check"></i>CRAN stats with metabase and mongodb</a><ul>
+<li class="chapter" data-level="" data-path="cran-stats-with-metabase-and-mongodb.html"><a href="cran-stats-with-metabase-and-mongodb.html#dockerfile-3"><i class="fa fa-check"></i>Dockerfile</a></li>
+<li class="chapter" data-level="" data-path="cran-stats-with-metabase-and-mongodb.html"><a href="cran-stats-with-metabase-and-mongodb.html#docker-compose-3"><i class="fa fa-check"></i>Docker Compose</a></li>
+<li class="chapter" data-level="" data-path="cran-stats-with-metabase-and-mongodb.html"><a href="cran-stats-with-metabase-and-mongodb.html#script-2"><i class="fa fa-check"></i>Script</a></li>
+<li class="chapter" data-level="" data-path="cran-stats-with-metabase-and-mongodb.html"><a href="cran-stats-with-metabase-and-mongodb.html#add-data"><i class="fa fa-check"></i>Add data</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="bookdown.html"><a href="bookdown.html"><i class="fa fa-check"></i>bookdown</a><ul>
+<li class="chapter" data-level="" data-path="bookdown.html"><a href="bookdown.html#dockerfile-4"><i class="fa fa-check"></i>Dockerfile</a></li>
+<li class="chapter" data-level="" data-path="bookdown.html"><a href="bookdown.html#render-book"><i class="fa fa-check"></i>Render book</a></li>
+<li class="chapter" data-level="" data-path="bookdown.html"><a href="bookdown.html#serve-book"><i class="fa fa-check"></i>Serve book</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="shinyproxy.html"><a href="shinyproxy.html"><i class="fa fa-check"></i>ShinyProxy</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="continious-integration.html"><a href="continious-integration.html"><i class="fa fa-check"></i>Continious Integration</a><ul>
+<li class="chapter" data-level="" data-path="gitlab-ci.html"><a href="gitlab-ci.html"><i class="fa fa-check"></i>Gitlab CI</a><ul>
+<li class="chapter" data-level="" data-path="gitlab-ci.html"><a href="gitlab-ci.html#gitlab-container"><i class="fa fa-check"></i>Gitlab Container</a></li>
+<li class="chapter" data-level="" data-path="gitlab-ci.html"><a href="gitlab-ci.html#gitlab-runner"><i class="fa fa-check"></i>Gitlab runner</a></li>
+<li class="chapter" data-level="" data-path="gitlab-ci.html"><a href="gitlab-ci.html#pipeline"><i class="fa fa-check"></i>Pipeline</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="drone.html"><a href="drone.html"><i class="fa fa-check"></i>Drone</a><ul>
+<li class="chapter" data-level="" data-path="drone.html"><a href="drone.html#gogs-container"><i class="fa fa-check"></i>Gogs container</a></li>
+<li class="chapter" data-level="" data-path="drone.html"><a href="drone.html#drone-server-and-agent"><i class="fa fa-check"></i>Drone server and agent</a></li>
+<li class="chapter" data-level="" data-path="drone.html"><a href="drone.html#pipeline-1"><i class="fa fa-check"></i>Pipeline</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="concourse.html"><a href="concourse.html"><i class="fa fa-check"></i>Concourse</a><ul>
+<li class="chapter" data-level="" data-path="concourse.html"><a href="concourse.html#docker-compose-4"><i class="fa fa-check"></i>Docker compose</a></li>
+<li class="chapter" data-level="" data-path="concourse.html"><a href="concourse.html#tasks"><i class="fa fa-check"></i>Tasks</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="orchestrierung.html"><a href="orchestrierung.html"><i class="fa fa-check"></i>Orchestrierung</a><ul>
+<li class="chapter" data-level="" data-path="docker-swarm.html"><a href="docker-swarm.html"><i class="fa fa-check"></i>Docker Swarm</a></li>
+<li class="chapter" data-level="" data-path="rancher.html"><a href="rancher.html"><i class="fa fa-check"></i>Rancher</a><ul>
+<li class="chapter" data-level="" data-path="rancher.html"><a href="rancher.html#features"><i class="fa fa-check"></i>Features</a></li>
+<li class="chapter" data-level="" data-path="rancher.html"><a href="rancher.html#installation-1"><i class="fa fa-check"></i>Installation</a></li>
+<li class="chapter" data-level="" data-path="rancher.html"><a href="rancher.html#browse-web-gui"><i class="fa fa-check"></i>Browse Web-GUI</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="kubernetes-google.html"><a href="kubernetes-google.html"><i class="fa fa-check"></i>Kubernetes (Google)</a></li>
+<li class="chapter" data-level="" data-path="portainer.html"><a href="portainer.html"><i class="fa fa-check"></i>Portainer</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="more-container-runtime-engines.html"><a href="more-container-runtime-engines.html"><i class="fa fa-check"></i>More container runtime engines?</a></li>
+<li class="chapter" data-level="" data-path="hey-ho.html"><a href="hey-ho.html"><i class="fa fa-check"></i>Hey ho</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Captian RHub meets MobyR</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="drone" class="section level2">
+<h2>Drone</h2>
+<ul>
+<li><a href="https://drone.io" class="uri">https://drone.io</a></li>
+<li>Lightweight</li>
+<li>Local builds via <em>drone CLI</em> (runs containers on the local host)</li>
+</ul>
+<p>Integrations:</p>
+<ul>
+<li>Gogs</li>
+<li>GitLab</li>
+<li>Github</li>
+<li>Bitbucket</li>
+<li>Gitea</li>
+</ul>
+<div id="gogs-container" class="section level3">
+<h3>Gogs container</h3>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># start gogs</span>
+$ <span class="ex">docker</span> run --name=gogs -p 10022:22 -p 10080:3000 -v /var/gogs:/data gogs/gogs</code></pre></div>
+</div>
+<div id="drone-server-and-agent" class="section level3">
+<h3>Drone server and agent</h3>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># docker-compose.yml</span>
+<span class="ex">version</span>: <span class="st">&#39;2&#39;</span>
+
+<span class="ex">services</span>:
+  <span class="ex">drone-server</span>:
+    <span class="ex">image</span>: drone/drone:0.7
+    <span class="ex">ports</span>:
+      <span class="ex">-</span> 80:8000
+    <span class="ex">volumes</span>:
+      <span class="ex">-</span> /var/lib/drone:/var/lib/drone/
+    <span class="ex">restart</span>: always
+    <span class="ex">environment</span>:
+      <span class="ex">-</span> DRONE_OPEN=true
+      <span class="ex">-</span> DRONE_HOST=<span class="va">${DRONE_HOST}</span>
+      <span class="co">#- DRONE_GITHUB=true</span>
+      <span class="co">#- DRONE_GITHUB_CLIENT=${DRONE_GITHUB_CLIENT}</span>
+      <span class="co">#- DRONE_GITHUB_SECRET=${DRONE_GITHUB_SECRET}</span>
+      <span class="ex">-</span> DRONE_GOGS=true
+      <span class="ex">-</span> DRONE_GOGS_URL=http://gogs.mycompany.com
+
+  <span class="ex">drone-agent</span>:
+    <span class="ex">image</span>: drone/drone:0.7
+    <span class="ex">command</span>: agent
+    <span class="ex">restart</span>: always
+    <span class="ex">depends_on</span>:
+      <span class="ex">-</span> drone-server
+    <span class="ex">volumes</span>:
+      <span class="ex">-</span> /var/run/docker.sock:/var/run/docker.sock
+    <span class="ex">environment</span>:
+      <span class="ex">-</span> DRONE_SERVER=ws://drone-server:8000/ws/broker
+      <span class="ex">-</span> DRONE_SECRET=<span class="va">${DRONE_SECRET}</span></code></pre></div>
+</div>
+<div id="pipeline-1" class="section level3">
+<h3>Pipeline</h3>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># .drone.yml</span>
+<span class="ex">pipeline</span>:
+  <span class="ex">rocket</span>:
+    <span class="ex">image</span>: rocker/rstudio
+    <span class="ex">commands</span>:
+      <span class="ex">-</span> install2.r magrittr
+      <span class="ex">-</span> Rscript -e <span class="st">&quot;library(magrittr); iris %&gt;% head() %&gt;% print(); write.csv(iris, &#39;that.csv&#39;)&quot;</span>
+  <span class="ex">science</span>:
+    <span class="ex">image</span>: rocker/rstudio
+    <span class="ex">commands</span>:
+      <span class="ex">-</span> cat that.csv
+  <span class="ex">deploy</span>:
+    <span class="ex">image</span>: alpine
+    <span class="ex">commands</span>:
+      <span class="ex">-</span> echo This is rocket science
+      <span class="ex">-</span> cp that.csv /inside
+      <span class="ex">-</span> rm that.csv
+    <span class="ex">volumes</span>:
+      <span class="ex">-</span> /tmp:/inside
+    <span class="ex">when</span>:
+      <span class="ex">status</span>: success</code></pre></div>
+<p>Run a local build</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Install drone CLI</span>
+$ <span class="ex">curl</span> -L https://github.com/drone/drone-cli/releases/download/v0.8.0/drone_linux_amd64.tar.gz <span class="kw">|</span> <span class="fu">tar</span> zx
+$ <span class="fu">install</span> -t /usr/local/bin drone
+
+<span class="co"># Run task</span>
+$ <span class="ex">drone</span> exec .drone.yml</code></pre></div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="gitlab-ci.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="concourse.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>
