@@ -109,7 +109,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li class="chapter" data-level="" data-path="images.html"><a href="images.html"><i class="fa fa-check"></i>Images</a><ul>
 <li class="chapter" data-level="" data-path="docker-hub.html"><a href="docker-hub.html"><i class="fa fa-check"></i>Docker Hub</a><ul>
-<li class="chapter" data-level="" data-path="docker-hub.html"><a href="docker-hub.html#programming-langues"><i class="fa fa-check"></i>Programming langues</a></li>
+<li class="chapter" data-level="" data-path="docker-hub.html"><a href="docker-hub.html#programming-languages"><i class="fa fa-check"></i>Programming languages</a></li>
 <li class="chapter" data-level="" data-path="docker-hub.html"><a href="docker-hub.html#databases"><i class="fa fa-check"></i>Databases</a></li>
 <li class="chapter" data-level="" data-path="docker-hub.html"><a href="docker-hub.html#webservers"><i class="fa fa-check"></i>Webservers</a></li>
 <li class="chapter" data-level="" data-path="docker-hub.html"><a href="docker-hub.html#oss"><i class="fa fa-check"></i>OSs</a></li>
@@ -125,6 +125,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="" data-path="images-and-layers.html"><a href="images-and-layers.html"><i class="fa fa-check"></i>Images and layers</a></li>
 <li class="chapter" data-level="" data-path="containers-and-layers.html"><a href="containers-and-layers.html"><i class="fa fa-check"></i>Containers and layers</a></li>
 <li class="chapter" data-level="" data-path="container-size-on-disk.html"><a href="container-size-on-disk.html"><i class="fa fa-check"></i>Container size on disk</a></li>
+<li class="chapter" data-level="" data-path="container-statistics.html"><a href="container-statistics.html"><i class="fa fa-check"></i>Container statistics</a></li>
 <li class="chapter" data-level="" data-path="dockerfile.html"><a href="dockerfile.html"><i class="fa fa-check"></i>Dockerfile</a><ul>
 <li class="chapter" data-level="" data-path="build-and-run.html"><a href="build-and-run.html"><i class="fa fa-check"></i>Build and run</a></li>
 <li class="chapter" data-level="" data-path="containerit.html"><a href="containerit.html"><i class="fa fa-check"></i>Containerit</a></li>
@@ -139,7 +140,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li class="chapter" data-level="" data-path="networks-and-port-forwarding.html"><a href="networks-and-port-forwarding.html"><i class="fa fa-check"></i>Networks and port forwarding</a></li>
 <li class="chapter" data-level="" data-path="docker-hierarchy.html"><a href="docker-hierarchy.html"><i class="fa fa-check"></i>Docker hierarchy</a></li>
-<li class="chapter" data-level="" data-path="simple-manual-workflow.html"><a href="simple-manual-workflow.html"><i class="fa fa-check"></i>Simple manual workflow ???</a></li>
+<li class="chapter" data-level="" data-path="simple-manual-workflow.html"><a href="simple-manual-workflow.html"><i class="fa fa-check"></i>Simple manual workflow</a></li>
 <li class="chapter" data-level="" data-path="docker-cli.html"><a href="docker-cli.html"><i class="fa fa-check"></i>Docker CLI</a></li>
 <li class="chapter" data-level="" data-path="pipelines.html"><a href="pipelines.html"><i class="fa fa-check"></i>Pipelines</a><ul>
 <li class="chapter" data-level="" data-path="julia-script.html"><a href="julia-script.html"><i class="fa fa-check"></i>Julia script</a></li>
@@ -245,9 +246,11 @@ $ <span class="ex">docker</span> run -d \
 <p>Without cert, ups …</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># /etc/docker/damon.json</span>
 <span class="kw">{</span>
-  <span class="st">&quot;insecure-registries&quot;</span>: [<span class="st">&quot;my-registry.com:5000&quot;</span>]
+  <span class="st">&quot;insecure-registries&quot;</span>: [<span class="st">&quot;captain-rhub.de:5000&quot;</span>]
 <span class="kw">}</span></code></pre></div>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">docker</span> push my-registry.com/mobyr</code></pre></div>
+<p>Push image to local registry</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">docker</span> tag kuethe/mobyr:0.1 captain-rhub.de:5000/mobyr
+$ <span class="ex">docker</span> push captain-rhub.de:5000/mobyr</code></pre></div>
 </div>
 <!-- </div> -->
             </section>

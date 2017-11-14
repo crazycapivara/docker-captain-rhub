@@ -31,7 +31,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="container-size-on-disk.html">
+<link rel="prev" href="container-statistics.html">
 <link rel="next" href="build-and-run.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -109,7 +109,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li class="chapter" data-level="" data-path="images.html"><a href="images.html"><i class="fa fa-check"></i>Images</a><ul>
 <li class="chapter" data-level="" data-path="docker-hub.html"><a href="docker-hub.html"><i class="fa fa-check"></i>Docker Hub</a><ul>
-<li class="chapter" data-level="" data-path="docker-hub.html"><a href="docker-hub.html#programming-langues"><i class="fa fa-check"></i>Programming langues</a></li>
+<li class="chapter" data-level="" data-path="docker-hub.html"><a href="docker-hub.html#programming-languages"><i class="fa fa-check"></i>Programming languages</a></li>
 <li class="chapter" data-level="" data-path="docker-hub.html"><a href="docker-hub.html#databases"><i class="fa fa-check"></i>Databases</a></li>
 <li class="chapter" data-level="" data-path="docker-hub.html"><a href="docker-hub.html#webservers"><i class="fa fa-check"></i>Webservers</a></li>
 <li class="chapter" data-level="" data-path="docker-hub.html"><a href="docker-hub.html#oss"><i class="fa fa-check"></i>OSs</a></li>
@@ -125,6 +125,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="" data-path="images-and-layers.html"><a href="images-and-layers.html"><i class="fa fa-check"></i>Images and layers</a></li>
 <li class="chapter" data-level="" data-path="containers-and-layers.html"><a href="containers-and-layers.html"><i class="fa fa-check"></i>Containers and layers</a></li>
 <li class="chapter" data-level="" data-path="container-size-on-disk.html"><a href="container-size-on-disk.html"><i class="fa fa-check"></i>Container size on disk</a></li>
+<li class="chapter" data-level="" data-path="container-statistics.html"><a href="container-statistics.html"><i class="fa fa-check"></i>Container statistics</a></li>
 <li class="chapter" data-level="" data-path="dockerfile.html"><a href="dockerfile.html"><i class="fa fa-check"></i>Dockerfile</a><ul>
 <li class="chapter" data-level="" data-path="build-and-run.html"><a href="build-and-run.html"><i class="fa fa-check"></i>Build and run</a></li>
 <li class="chapter" data-level="" data-path="containerit.html"><a href="containerit.html"><i class="fa fa-check"></i>Containerit</a></li>
@@ -139,7 +140,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li class="chapter" data-level="" data-path="networks-and-port-forwarding.html"><a href="networks-and-port-forwarding.html"><i class="fa fa-check"></i>Networks and port forwarding</a></li>
 <li class="chapter" data-level="" data-path="docker-hierarchy.html"><a href="docker-hierarchy.html"><i class="fa fa-check"></i>Docker hierarchy</a></li>
-<li class="chapter" data-level="" data-path="simple-manual-workflow.html"><a href="simple-manual-workflow.html"><i class="fa fa-check"></i>Simple manual workflow ???</a></li>
+<li class="chapter" data-level="" data-path="simple-manual-workflow.html"><a href="simple-manual-workflow.html"><i class="fa fa-check"></i>Simple manual workflow</a></li>
 <li class="chapter" data-level="" data-path="docker-cli.html"><a href="docker-cli.html"><i class="fa fa-check"></i>Docker CLI</a></li>
 <li class="chapter" data-level="" data-path="pipelines.html"><a href="pipelines.html"><i class="fa fa-check"></i>Pipelines</a><ul>
 <li class="chapter" data-level="" data-path="julia-script.html"><a href="julia-script.html"><i class="fa fa-check"></i>Julia script</a></li>
@@ -237,12 +238,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1>Dockerfile</h1>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">FROM</span> rocker/r-base
 <span class="ex">LABEL</span> maintainer=<span class="st">&quot;stefan kuethe &lt;crazycapivara@gmail.com&gt;&quot;</span>
+<span class="co"># Install additional R-packages </span>
 <span class="ex">RUN</span> install2.r rmarkdown formatR bookdown
 <span class="ex">COPY</span> ./book /book
 <span class="ex">WORKDIR</span> /book
+<span class="co"># Install pandoc</span>
 <span class="ex">RUN</span> apt-get update <span class="kw">&amp;&amp;</span> <span class="ex">apt-get</span> install pandoc -y \
         <span class="kw">&amp;&amp;</span> <span class="fu">rm</span> -rf /var/lib/apt/lists/*
-
+<span class="co"># Render book on startup</span>
 <span class="ex">CMD</span> [<span class="st">&quot;r&quot;</span>, <span class="st">&quot;render_book.R&quot;</span>]</code></pre></div> 
 </div>
             </section>
@@ -250,7 +253,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           </div>
         </div>
       </div>
-<a href="container-size-on-disk.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="container-statistics.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 <a href="build-and-run.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>

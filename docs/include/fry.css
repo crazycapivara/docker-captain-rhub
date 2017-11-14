@@ -20,9 +20,11 @@ _section {
 }
 
 h1, h2, h3, h4{
+  /*
   margin-top: 0 !important;
   _font-weight: 300;
   _text-align: center;
+  */
 }
 
 h4 {
