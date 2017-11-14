@@ -137,6 +137,10 @@ Images
 - rocker/r-ver
 - ...
 
+## Automatic Builds
+
+- Dockerhub + Github
+
 # Containers
 
 A __container__ is an instance of an __image__.
@@ -157,6 +161,20 @@ $ docker ps
 
 # List stopped container as well
 $ docker ps -a
+```
+
+# Images and Layers
+
+```{r, echo=FALSE, eval=TRUE}
+knitr::include_graphics("pix/container-layers.jpg")
+```
+
+- A Docker image is built up from a series of layers.
+- Each layer represents an instruction in the image’s `Dockerfile`.
+- Each layer except the very last one is read-only. 
+
+```{bash}
+$ docker ps -s
 ```
 
 # Docker hierarchy

@@ -13,5 +13,6 @@ services:
       - ./scripts:/scripts
     depends_on:
       - neo4j
-    command: ["./wait-for-it.sh", "neo4j:7474", "--", "Rscript", "rstudio_pkgs.R", "Rcpp", "dplyr"]
+    command: ["./wait-for-neo4j.sh", "neo4j", "7474", "Rscript", "rstudio_pkgs.R", "Rcpp", "dplyr"]
+    #command: ["./wait-for-it.sh", "neo4j:7474", "--", "Rscript", "rstudio_pkgs.R", "Rcpp", "dplyr"]
 
